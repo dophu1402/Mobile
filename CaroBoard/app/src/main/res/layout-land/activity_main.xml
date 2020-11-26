@@ -5,29 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="horizontal">
     <com.example.board.ZoomLayout
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="20dp"
-        android:background="@color/colorAccent">
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-
-            >
+        android:background="@color/colorAccent"
+        android:layout_gravity="center"
+        android:gravity="center">
+<!--        <RelativeLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:id="@+id/myRelative"-->
+<!--            >-->
             <GridLayout
-
-                android:id="@+id/mygrid"
+                android:id="@+id/myGrid"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:columnCount="20"
                 android:rowCount="20"
                 android:background="@android:color/background_light" >
             </GridLayout>
-
-
-        </RelativeLayout>
+<!--        </RelativeLayout>-->
     </com.example.board.ZoomLayout>
 </LinearLayout>

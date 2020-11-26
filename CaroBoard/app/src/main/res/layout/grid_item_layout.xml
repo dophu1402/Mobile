@@ -5,7 +5,7 @@
     android:id="@+id/list_item"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
-        android:background="#00ff00"
+        android:background="#ffffff"
         android:id="@+id/text"
         android:layout_width="30dp"
         android:layout_height="30dp"
