@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ public class GameMenuAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.NameGame = (TextView) row.findViewById(R.id.NameGame);
             holder.ImageGame = (ImageView) row.findViewById(R.id.ImageGame);
+            holder.BackgroundGame = (LinearLayout)row.findViewById(R.id.BackgroundGame);
 
             row.setTag(holder);
         } else { // row was already created- no need to inflate and invoke findViewById getTag() returns the object originally stored in this view
@@ -52,6 +55,9 @@ public class GameMenuAdapter extends BaseAdapter {
         GameDataBase.DbRecord dbRec = getItem(position);
         holder.NameGame.setText(dbRec.nameGame);
         holder.ImageGame.setImageResource(dbRec.wallpaper);
+        holder.BackgroundGame.setBackgroundResource(dbRec.color);
+
+        Log.d("STATE", "getView: " + Integer.toString(dbRec.color) );
 
         row.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
@@ -65,7 +71,9 @@ public class GameMenuAdapter extends BaseAdapter {
                 bundle.putInt("CodeGame", code);
 
                 intent.putExtras(bundle);
-                context.startActivity(intent);
+                if (code != -1){
+                    context.startActivity(intent);
+                }
             }
         });
 
@@ -74,6 +82,7 @@ public class GameMenuAdapter extends BaseAdapter {
     public class ViewHolder {
         TextView NameGame;
         ImageView ImageGame;
+        LinearLayout BackgroundGame;
     }
 }
 

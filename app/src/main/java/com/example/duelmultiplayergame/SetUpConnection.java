@@ -13,6 +13,7 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
 
     Button btnBackConnect;
     Intent intent = null;
+    Bundle bundle = null;
 
     // btn control
     Button btnPlayonOnline, btnPlayonOffline;
@@ -31,12 +32,7 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
         btnPlayonOnline.setOnClickListener(this);
         btnBackConnect.setOnClickListener(this);
 
-        Bundle bundle = getIntent().getExtras();
-
-        if (bundle.getInt("CodeGame") == Constant_Name_Game.CARO.getValue()){
-            Toast.makeText(this,"Caro", Toast.LENGTH_SHORT).show();
-            intent = new Intent(SetUpConnection.this, GamePlay.class);
-        }
+        bundle = getIntent().getExtras();
 
     }
 
@@ -47,6 +43,10 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
                 SetUpConnection.super.onBackPressed();
                 break;
             case R.id.btnPlayonOffline:
+                if (bundle.getInt("CodeGame") == Constant_Name_Game.CARO.getValue()){
+                    Toast.makeText(this,"Caro", Toast.LENGTH_SHORT).show();
+                    intent = new Intent(SetUpConnection.this, GamePlay.class);
+                }
                 if (intent != null){
                     startActivity(intent);
                 }
@@ -54,7 +54,15 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.btnPlayonOnline:
-                // connect
+                if (bundle.getInt("CodeGame") == Constant_Name_Game.CARO.getValue()){
+                    Toast.makeText(this,"Caro", Toast.LENGTH_SHORT).show();
+                    intent = new Intent(SetUpConnection.this, WifiConnect.class);
+                }
+                if (intent != null){
+                    startActivity(intent);
+                }
+                else {
+                }
                 break;
         }
     }
