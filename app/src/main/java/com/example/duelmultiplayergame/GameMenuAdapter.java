@@ -57,7 +57,13 @@ public class GameMenuAdapter extends BaseAdapter {
             @Override public void onClick(View v) {
                 Intent intent = new Intent(context, SetUpConnection.class);
                 Bundle bundle = new Bundle();
-                bundle.putInt("CodeGame", Constant_Name_Game.CARO.getValue());
+
+                int code = -1;
+                if (position == 0){
+                    code = Constant_Name_Game.CARO.getValue();
+                }
+                bundle.putInt("CodeGame", code);
+
                 intent.putExtras(bundle);
                 context.startActivity(intent);
             }

@@ -37,7 +37,7 @@ public class GamePlay extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_play);
 
-        myGridLayout = (GridLayout) findViewById(R.id.myGrid);
+        myGridLayout = (GridLayout)findViewById(R.id.myGrid);
         myGridLayout.setUseDefaultMargins(false);
         myGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
         myGridLayout.setRowOrderPreserved(false);
@@ -90,7 +90,6 @@ public class GamePlay extends Activity {
                 myGridLayout.addView(tView);
             }
         }
-
         myGridLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener(){
                     @Override
@@ -147,7 +146,6 @@ public class GamePlay extends Activity {
 //    }
 
     MyView[] myViews;
-
 
 //    boolean d = false;
 //    public boolean onInterceptTouchEvent(MotionEvent event) {
