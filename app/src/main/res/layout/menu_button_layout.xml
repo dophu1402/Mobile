@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/backgroundGame"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:orientation="horizontal"
+    android:weightSum="10"
+    android:layout_margin="50dp"
+    android:background="#B8A474">
+    <TextView
+        android:id="@+id/NameGame"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:textSize="40sp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:text="Caro"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"/>
+    <ImageView
+        android:id="@+id/ImageGame"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        />
+</LinearLayout>
