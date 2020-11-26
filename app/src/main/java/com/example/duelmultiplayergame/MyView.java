@@ -1,16 +1,18 @@
-package com.example.connectapp;
+package com.example.duelmultiplayergame;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatButton;
 
-public class MyView extends AppCompatButton {
+public class MyView extends androidx.appcompat.widget.AppCompatButton {
 
     public interface OnToggledListener {
-        void OnToggled(com.example.connectapp.MyView v, boolean touchOn);
+        void OnToggled(MyView v, boolean touchOn);
     }
 
     boolean touchOn = false;
@@ -84,12 +86,9 @@ public class MyView extends AppCompatButton {
     protected void onDraw(Canvas canvas) {
         if (touchOn) {
             if (player == true){
-                //canvas.drawColor(Color.RED);
                 this.setBackgroundResource(R.drawable.o);
             }
             else{
-                //canvas.drawColor(Color.BLUE);
-
                 this.setBackgroundResource(R.drawable.x);
             }
         } else {

@@ -1,4 +1,4 @@
-package com.example.connectapp;
+package com.example.duelmultiplayergame;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,9 +16,9 @@ import androidx.core.app.ActivityCompat;
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private MainActivity mActivity;
+    private WifiConnect mActivity;
 
-    public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, MainActivity mActivity)
+    public WiFiDirectBroadcastReceiver(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, WifiConnect mActivity)
     {
         this.mManager = mManager;
         this.mChannel = mChannel;
@@ -32,10 +32,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         if(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)){
             int state=intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE,-1);
 
-            if(state==WifiP2pManager.WIFI_P2P_STATE_ENABLED){
-                Toast.makeText(context,"Wifi is ON",Toast.LENGTH_SHORT).show();
+            if(state== WifiP2pManager.WIFI_P2P_STATE_ENABLED){
+                Toast.makeText(context,"Wifi is ON", Toast.LENGTH_SHORT).show();
             }else {
-                Toast.makeText(context,"Wifi is OFF",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Wifi is OFF", Toast.LENGTH_SHORT).show();
             }
         }else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
             //do something

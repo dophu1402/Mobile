@@ -1,4 +1,4 @@
-package com.example.connectapp;
+package com.example.duelmultiplayergame;
 
 public class ChessSquare {
     boolean touchOn;

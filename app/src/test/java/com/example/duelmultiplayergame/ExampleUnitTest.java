@@ -1,4 +1,4 @@
-package com.example.connectapp;
+package com.example.duelmultiplayergame;
 
 import org.junit.Test;
 

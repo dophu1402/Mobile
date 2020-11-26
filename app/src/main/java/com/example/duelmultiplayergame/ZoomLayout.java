@@ -1,4 +1,4 @@
-package com.example.connectapp;
+package com.example.duelmultiplayergame;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;

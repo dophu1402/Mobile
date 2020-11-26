@@ -5,13 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SplashActivity">
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/frameSplash"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Main"
-        android:layout_gravity="center"
-        android:textAlignment="center"/>
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/carologo"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
 
 </LinearLayout>
