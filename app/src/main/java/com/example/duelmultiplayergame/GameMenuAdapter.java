@@ -55,9 +55,9 @@ public class GameMenuAdapter extends BaseAdapter {
         GameDataBase.DbRecord dbRec = getItem(position);
         holder.NameGame.setText(dbRec.nameGame);
         holder.ImageGame.setImageResource(dbRec.wallpaper);
-        holder.BackgroundGame.setBackgroundResource(dbRec.color);
+//        holder.BackgroundGame.setBackgroundResource(dbRec.color);
 
-        Log.d("STATE", "getView: " + Integer.toString(dbRec.color) );
+//        Log.d("STATE", "getView: " + Integer.toString(dbRec.color) );
 
         row.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
