@@ -9,15 +9,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatButton;
 
-public class MyView extends androidx.appcompat.widget.AppCompatButton {
+public class MyView extends AppCompatButton {
 
     public interface OnToggledListener {
         void OnToggled(MyView v, boolean touchOn);
     }
 
-    boolean touchOn = false;
-    boolean player;
+    boolean touchOn;
+    int player; //player = 0 -> no player, = 1 -> x; = 2 -> o
     boolean mDownTouch = false;
+    boolean clicking;
+    boolean winner;
     private OnToggledListener toggledListener;
     int idX = 0; //default
     int idY = 0; //default
@@ -47,18 +49,30 @@ public class MyView extends androidx.appcompat.widget.AppCompatButton {
     public boolean getToggle() {
         return touchOn;
     }
-    public boolean getPlayer() {
+    public int getPlayer() {
         return player;
     }
 
-    public void setOn(boolean toggled, boolean player){
-        this.player = player;
+    public void setOn(boolean toggled, int p){
+        player = p;
         touchOn = toggled;
+        clicking = true;
     }
 
+    public void setOffClicking()
+    {
+        clicking = false;
+    }
+
+    public void setWinnerOn() { winner = true; }
+
+
     private void init() {
-        this.setBackgroundResource(R.drawable.bg);
+        this.setBackgroundResource(R.drawable.carosquare);
+        player = 0;
         touchOn = false;
+        clicking = false;
+        winner = false;
         this.setOnClickListener(new OnClickListener(){
             @Override
             //On click function
@@ -85,12 +99,31 @@ public class MyView extends androidx.appcompat.widget.AppCompatButton {
     @Override
     protected void onDraw(Canvas canvas) {
         if (touchOn) {
-            if (player == true){
-                this.setBackgroundResource(R.drawable.o);
+            if(winner) {
+                if (player == 1){
+                    this.setBackgroundResource(R.drawable.xwin);
+                }
+                else if(player == 2) {
+                    this.setBackgroundResource(R.drawable.owin);
+                }
             }
-            else{
-                this.setBackgroundResource(R.drawable.x);
+            else if(clicking){
+                if (player == 1){
+                    this.setBackgroundResource(R.drawable.xonclick);
+                }
+                else if(player == 2) {
+                    this.setBackgroundResource(R.drawable.oonclick);
+                }
             }
+            else {
+                if (player == 1){
+                    this.setBackgroundResource(R.drawable.xnormal);
+                }
+                else if(player == 2) {
+                    this.setBackgroundResource(R.drawable.onormal);
+                }
+            }
+            invalidate();
         } else {
             //do nothing
         }

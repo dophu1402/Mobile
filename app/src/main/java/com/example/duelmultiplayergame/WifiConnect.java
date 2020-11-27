@@ -1,12 +1,14 @@
 package com.example.duelmultiplayergame;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.inputmethodservice.Keyboard;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -16,17 +18,22 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+import com.example.duelmultiplayergame.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,10 +48,10 @@ import java.util.List;
 public class WifiConnect extends Activity {
 
     Context context;
-    Button btnOnOff, btnDiscover, btnSend;
+    Button btnOnOff, btnDiscover, btnSend, btnChat;
     ListView listView;
-    TextView read_msg_box, connectionStatus;
-    EditText writeMsg;
+    TextView read_msg_box, connectionStatus, myChat, opponentChat;
+    EditText writeMsg, chatMsg;
 
     WifiManager wifiManager;
     WifiP2pManager mManager;
@@ -58,21 +65,41 @@ public class WifiConnect extends Activity {
     WifiP2pDevice[] deviceArray;
 
     static final int MESSAGE_READ=1;
+    boolean turn = true;
+    ChessSquare currentSquare;
 
     ServerClass serverClass;
     ClientClass clientClass;
     SendReceive sendReceive;
 
-    Intent codeGameIntent = null;
-    Bundle codeGameBundle = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_connect);
-        context = this.getApplicationContext();
+        context = this;
         initialWork();
         exqListener();
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            ActivityCompat.requestPermissions((Activity) context,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1
+            );
+        }
+        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onSuccess() {
+                connectionStatus.setText("Finding Opponents");
+            }
+
+            @Override
+            public void onFailure(int i) {
+                connectionStatus.setText("Finding Failed");
+            }
+        });
 
     }
 
@@ -84,7 +111,53 @@ public class WifiConnect extends Activity {
                 case MESSAGE_READ:
                     byte[] readBuff= (byte[]) msg.obj;
                     String tempMsg=new String(readBuff,0,msg.arg1);
-                    read_msg_box.setText(tempMsg);
+                    if (tempMsg.length() > 1){
+                        if (tempMsg.charAt(0) == '1'){
+                            tempMsg = tempMsg.substring(1);
+                            String[] pos = tempMsg.split(",",2);
+                            if(pos.length<2){
+                                break;
+                            }
+                            try {
+                                int xPos = Integer.valueOf(pos[0]);
+                                int yPos = Integer.valueOf(pos[1]);
+                                int player;
+                                if (totalTurns % 2 == 0) {
+                                    player = 1;
+                                }
+                                else {
+                                    player = 2;
+                                }
+                                myViews[yPos * numOfRow + xPos].setOn(true, player);
+                                myViews[yPos * numOfRow + xPos].invalidate();
+                                turn = true;
+                                if(currentSquare != null) {
+                                    myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
+                                }
+                                currentSquare = new ChessSquare(true, player, myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY());
+                                totalTurns++;
+                                int status = checkWinner(myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY());
+
+                                if (status!=0){
+                                    resultHandler(status);
+                                }
+                            }
+                            catch (Exception e){
+
+                            }
+                        }
+                        else if (tempMsg.charAt(0) == '2') {
+                            tempMsg = tempMsg.substring(1);
+                            if (tempMsg.length() < 1) {
+                                break;
+                            }
+                            opponentChat.setText(tempMsg);
+                        }
+                        else{
+                            //do nothing
+                        }
+                    }
+                    //read_msg_box.setText(tempMsg);
                     break;
             }
             return true;
@@ -109,7 +182,7 @@ public class WifiConnect extends Activity {
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ActivityCompat.checkSelfPermission(WifiConnect.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     ActivityCompat.requestPermissions((Activity) context,
@@ -118,14 +191,15 @@ public class WifiConnect extends Activity {
                     );
                 }
                 mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess() {
-                        connectionStatus.setText("Discovery Started");
+                        connectionStatus.setText("Finding Opponents");
                     }
 
                     @Override
                     public void onFailure(int i) {
-                        connectionStatus.setText("Discovery Starting Failed");
+                        connectionStatus.setText("Finding Failed");
                     }
                 });
             }
@@ -137,7 +211,7 @@ public class WifiConnect extends Activity {
                 final WifiP2pDevice device=deviceArray[i];
                 WifiP2pConfig config=new WifiP2pConfig();
                 config.deviceAddress=device.deviceAddress;
-                if (ActivityCompat.checkSelfPermission(WifiConnect.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     ActivityCompat.requestPermissions((Activity) context,
@@ -149,6 +223,7 @@ public class WifiConnect extends Activity {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(getApplicationContext(),"Connected to "+device.deviceName,Toast.LENGTH_SHORT).show();
+
                     }
 
                     @Override
@@ -182,7 +257,7 @@ public class WifiConnect extends Activity {
         mManager= (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel=mManager.initialize(this,getMainLooper(),null);
 
-        mReceiver=new WiFiDirectBroadcastReceiver(mManager, mChannel,this);
+        mReceiver=new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
 
         mIntentFilter=new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -230,11 +305,15 @@ public class WifiConnect extends Activity {
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner)
             {
                 connectionStatus.setText("Host");
+                setContentView(R.layout.activity_game_play);
+                createBoard();
                 serverClass=new ServerClass();
                 serverClass.start();
             }else if(wifiP2pInfo.groupFormed)
             {
                 connectionStatus.setText("Client");
+                setContentView(R.layout.activity_game_play);
+                createBoard();
                 clientClass=new ClientClass(groupOwnerAddress);
                 clientClass.start();
             }
@@ -340,6 +419,432 @@ public class WifiConnect extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    //////////////////////////////////////////////////////////////////
+    private ScaleGestureDetector mScaleGestureDetector;
+    int pWidth;
+    int pHeight;
+    int totalTurns = 0;
+    int numOfCol;
+    int numOfRow;
+    boolean isOnline = true;
+
+    private void createBoard(){
+        myGridLayout = (GridLayout)findViewById(R.id.myGrid);
+        myGridLayout.setUseDefaultMargins(false);
+        myGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
+        myGridLayout.setRowOrderPreserved(false);
+        numOfCol = myGridLayout.getColumnCount();
+        numOfRow = myGridLayout.getRowCount();
+        myViews = new MyView[numOfCol*numOfRow];
+
+        myChat = (TextView) findViewById(R.id.my_chat);
+        opponentChat = (TextView) findViewById(R.id.opponent_chat);
+        chatMsg = (EditText) findViewById(R.id.chatMsg);
+        btnChat = (Button) findViewById(R.id.chatButton);
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myChat.setText(chatMsg.getText());
+                String msg="2" + chatMsg.getText().toString();
+                sendReceive.write(msg.getBytes());
+                chatMsg.setText("");
+                try {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
+
+            }
+        });
+
+        for(int yPos=0; yPos<numOfRow; yPos++){
+            for(int xPos=0; xPos<numOfCol; xPos++){
+                final MyView tView = new MyView(myGridLayout.getContext(), xPos, yPos);
+                tView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (tView.getToggle() == false && turn == true){
+                            int player;
+                            if (totalTurns % 2 == 0) {
+                                player = 1;
+                            }
+                            else {
+                                player = 2;
+                            }
+                            boolean isToggled = true;
+
+                            if(currentSquare != null) {
+                                myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
+                            }
+                            currentSquare = new ChessSquare(isToggled, player, tView.getIdX(),tView.getIdY());
+                            tView.setOn(isToggled, player);
+
+                            int status = checkWinner(tView.getIdX(),tView.getIdY());
+
+                            if (status!=0){
+                                resultHandler(status);
+                            }
+                            ////////////////////////////
+                            //Send
+                            ///////////////////////////
+                            String msg = "1" + String.valueOf(tView.getIdX()) +","+ String.valueOf(tView.getIdY());
+                            sendReceive.write(msg.toString().getBytes());
+                            totalTurns++;
+                            turn = false;
+                            myGridLayout.invalidate();
+                        }
+                    }
+                });
+
+                myViews[yPos*numOfCol + xPos] = tView;
+                myGridLayout.addView(tView);
+            }
+        }
+        myGridLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener(){
+                    @Override
+                    public void onGlobalLayout() {
+
+                        final int MARGIN = 1;
+
+                        pWidth = myGridLayout.getWidth();
+                        pHeight = myGridLayout.getHeight();
+
+                        int numOfCol = myGridLayout.getColumnCount();
+                        int numOfRow = myGridLayout.getRowCount();
+                        int w = pWidth/numOfCol;
+                        int h = pHeight/numOfRow;
+
+                        for(int yPos=0; yPos<numOfRow; yPos++){
+                            for(int xPos=0; xPos<numOfCol; xPos++){
+                                GridLayout.LayoutParams params =
+                                        (GridLayout.LayoutParams)myViews[yPos*numOfCol + xPos].getLayoutParams();
+
+                                params.width = pWidth/numOfCol;
+                                params.height = pWidth/numOfRow;
+                                myViews[yPos*numOfCol + xPos].setLayoutParams(params);
+                            }
+                        }
+                    }
+                }
+        );
+
+
+    }
+
+    MyView[] myViews;
+
+    GridLayout myGridLayout;
+
+    private int checkWinner(int currentPosX, int currentPosY)
+    {
+        int status = 0;
+        int check;
+
+        //Create check board
+        ArrayList<ChessSquare> tempSquares;
+        ChessSquare[][] myBoard = new ChessSquare[numOfRow][numOfCol];
+        for(int yPos = 0; yPos < numOfRow; yPos++) {
+            for (int xPos = 0; xPos < numOfCol; xPos++) {
+                myBoard[yPos][xPos] = new ChessSquare(myViews[yPos*numOfCol + xPos].getToggle(),myViews[yPos*numOfCol + xPos].getPlayer(), xPos, yPos);
+            }
+        }
+
+        /////////////////////////
+        //set player to check
+        if(myBoard[currentPosY][currentPosX].player == 1)
+        {
+            status = 1;
+        }
+        else if (myBoard[currentPosY][currentPosX].player == 2)
+        {
+            status = 2;
+        }
+
+        ////////////////////////////////////
+        //check horizontal
+
+        tempSquares = new ArrayList<ChessSquare>();
+        tempSquares.add(myBoard[currentPosY][currentPosX]);
+
+        int countLeft = 0;
+        int countRight = 0;
+        int posLeft = currentPosX;
+        int posRight = currentPosX;
+
+        for (int i = currentPosX - 1; i >= 0; i--) {
+            if (myBoard[currentPosY][i].touchOn == true &&
+                    myBoard[currentPosY][i].player == myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[currentPosY][i]);
+                posLeft--;
+                countLeft++;
+            }
+            else{
+                break;
+            }
+        }
+
+        for (int i = currentPosX + 1; i < numOfCol; i++) {
+            if (myBoard[currentPosY][i].touchOn == true &&
+                    myBoard[currentPosY][i].player == myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[currentPosY][i]);
+                posRight++;
+                countRight++;
+            }
+            else{
+                break;
+            }
+        }
+
+        check = countLeft + countRight + 1;
+        if(check > 5){
+            setWinnerSquares(tempSquares);
+            return status;
+        }
+        else if((countLeft + countRight + 1 == 5) && !(
+                ((myBoard[currentPosY][posLeft - 1].player!=myBoard[currentPosY][currentPosX].player) && (posLeft - 1 >= 0) && (myBoard[currentPosY][posLeft - 1].touchOn))
+                        && ((myBoard[currentPosY][posRight + 1].player!=myBoard[currentPosY][currentPosX].player) && (posRight + 1 < numOfCol) && (myBoard[currentPosY][posRight + 1].touchOn))
+        )) {
+            setWinnerSquares(tempSquares);
+            return status;
+        }
+        tempSquares.clear();
+
+        ////////////////////////
+        //check vertical
+
+        tempSquares.add(myBoard[currentPosY][currentPosX]);
+
+        int countTop = 0;
+        int countBottom = 0;
+        int posTop = currentPosX;
+        int posBottom = currentPosX;
+
+        for (int i = currentPosY - 1; i >= 0; i--) {
+            if (myBoard[i][currentPosX].touchOn == true &&
+                    myBoard[i][currentPosX].player==myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[i][currentPosX]);
+                posTop--;
+                countTop++;
+            }
+            else{
+                break;
+            }
+        }
+
+        for (int i = currentPosY + 1; i < numOfRow; i++) {
+            if (myBoard[i][currentPosX].touchOn == true &&
+                    myBoard[i][currentPosX].player==myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[i][currentPosX]);
+                posBottom++;
+                countBottom++;
+            }
+            else{
+                break;
+            }
+        }
+
+        check = countTop + countBottom + 1;
+        if(check > 5){
+            setWinnerSquares(tempSquares);
+            return status;
+        }
+        else if((check == 5) && !(
+                ((myBoard[posTop - 1][currentPosX].player!=myBoard[currentPosY][currentPosX].player) && (posTop - 1 >= 0) && (myBoard[posTop - 1][currentPosX].touchOn == true))
+                        && ((myBoard[posBottom + 1][currentPosX].player!=myBoard[currentPosY][currentPosX].player) && (posBottom + 1 < numOfCol) && (myBoard[posBottom + 1][currentPosX].touchOn == true))
+        )) {
+            setWinnerSquares(tempSquares);
+            return status;
+        }
+
+        tempSquares.clear();
+
+        ///////////////////////////////
+        //Check Primary Diagonal
+
+        tempSquares.add(myBoard[currentPosY][currentPosX]);
+
+        int countPriPrev = 0;
+        int countPriAft = 0;
+        int posPrevX = currentPosX;
+        int posPrevY = currentPosY;
+        int posAftX = currentPosX;
+        int posAftY = currentPosY;
+
+
+        for (int i = numOfRow - 1; i >= 0; i--) {
+            if((posPrevX - 1 < 0) || (posPrevY - 1 < 0)) {
+                break;
+            }
+            if (myBoard[posPrevY - 1][posPrevX - 1].touchOn == true &&
+                    myBoard[posPrevY - 1][posPrevX - 1].player == myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[posPrevY - 1][posPrevX - 1]);
+                posPrevX--;
+                posPrevY--;
+                countPriPrev++;
+            }
+            else{
+                break;
+            }
+        }
+
+        for (int i = 0; i < numOfRow; i++) {
+            if((posAftX + 1 >= numOfCol) || (posAftY + 1 >= numOfRow)) {
+                break;
+            }
+            if (myBoard[posAftY + 1][posAftX + 1].touchOn == true &&
+                    myBoard[posAftY + 1][posAftX + 1].player==myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[posAftY + 1][posAftX + 1]);
+                posAftX++;
+                posAftY++;
+                countPriAft++;
+            }
+            else{
+                break;
+            }
+        }
+
+        check = countPriPrev + countPriAft + 1;
+        if(check > 5){
+            setWinnerSquares(tempSquares);
+            return status;
+        }
+        else if(check == 5)
+        {
+            if((posPrevX - 1 < 0) || (posPrevY - 1 < 0) || (posAftX + 1 >= numOfCol) || (posAftY + 1 >= numOfRow)) {
+                setWinnerSquares(tempSquares);
+                return status;
+            }
+            else {
+                if(!(myBoard[posPrevY - 1][posPrevX - 1].touchOn) || !(myBoard[posAftY + 1][posAftX + 1].touchOn)){
+                    setWinnerSquares(tempSquares);
+                    return status;
+                }
+                else {
+                    if(!((myBoard[posPrevY - 1][posPrevX - 1].player != myBoard[currentPosY][currentPosX].player) && (myBoard[posAftY + 1][posAftX + 1].player != myBoard[currentPosY][currentPosX].player))){
+                        setWinnerSquares(tempSquares);
+                        return status;
+                    }
+                }
+            }
+        }
+        tempSquares.clear();
+
+        /////////////////////////////////
+        //Check Sub Diagonal
+
+        tempSquares.add(myBoard[currentPosY][currentPosX]);
+
+        int countSubPrev = 0;
+        int countSubAft = 0;
+        posPrevX = currentPosX;
+        posPrevY = currentPosY;
+        posAftX = currentPosX;
+        posAftY = currentPosY;
+
+
+        for (int i = numOfRow; i >= 0; i--) {
+            if((posPrevX - 1 < 0) || (posPrevY + 1 >= numOfRow)) {
+                break;
+            }
+            if (myBoard[posPrevY + 1][posPrevX - 1].touchOn == true &&
+                    myBoard[posPrevY + 1][posPrevX - 1].player==myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[posPrevY + 1][posPrevX - 1]);
+                posPrevY++;
+                posPrevX--;
+                countSubPrev++;
+            }
+            else{
+                break;
+            }
+        }
+
+        for (int i = 0; i < numOfRow; i++) {
+            if((posAftX + 1 >= numOfCol) || (posAftY - 1 < 0)) {
+                break;
+            }
+            if (myBoard[posAftY - 1][posAftX + 1].touchOn == true &&
+                    myBoard[posAftY - 1][posAftX + 1].player == myBoard[currentPosY][currentPosX].player) {
+                tempSquares.add(myBoard[posAftY - 1][posAftX + 1]);
+                posAftY--;
+                posAftX++;
+                countSubAft++;
+            }
+            else{
+                break;
+            }
+        }
+
+        check = countSubPrev + countSubAft + 1;
+        if(check > 5){
+            setWinnerSquares(tempSquares);
+            return status;
+        }
+        else if(check == 5)
+        {
+            if((posPrevX - 1 < 0) || (posPrevY + 1 >= numOfRow) || (posAftX + 1 >= numOfCol) || (posAftY - 1 < 0)) {
+                setWinnerSquares(tempSquares);
+                return status;
+            }
+            else {
+                if(!(myBoard[posPrevY + 1][posPrevX - 1].touchOn) || !(myBoard[posAftY - 1][posAftX + 1].touchOn)){
+                    setWinnerSquares(tempSquares);
+                    return status;
+                }
+                else {
+                    if(!((myBoard[posPrevY + 1][posPrevX - 1].player != myBoard[currentPosY][currentPosX].player) && (myBoard[posAftY - 1][posAftX + 1].player != myBoard[currentPosY][currentPosX].player))){
+                        setWinnerSquares(tempSquares);
+                        return status;
+                    }
+                }
+            }
+        }
+
+        tempSquares.clear();
+
+
+        status = 0;
+        return status;
+    }
+
+    private void setWinnerSquares(List<ChessSquare> tempSquares)
+    {
+        for(int i = 0; i < tempSquares.size(); i++) {
+            ChessSquare temp = tempSquares.get(i);
+            myViews[temp.getIdY()*numOfCol + temp.getIdX()].setWinnerOn();
+        }
+    }
+
+    private void resultHandler(int winner)
+    {
+        if(winner == 1){
+            Toast.makeText(this, "P1 WIN", Toast.LENGTH_SHORT).show();
+        }
+        else if(winner == 2){
+            Toast.makeText(this, "P2 WIN", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+//    private boolean isEndHorizontal(int currentPosX)
+//    {
+//
+//    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
         }
     }
 }
