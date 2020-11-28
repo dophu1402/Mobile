@@ -66,6 +66,7 @@ public class WifiConnect extends Activity {
 
     static final int MESSAGE_READ=1;
     boolean turn = true;
+    boolean isOnline;
     ChessSquare currentSquare;
 
     ServerClass serverClass;
@@ -75,32 +76,42 @@ public class WifiConnect extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifi_connect);
-        context = this;
-        initialWork();
-        exqListener();
-
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            ActivityCompat.requestPermissions((Activity) context,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    1
-            );
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            isOnline = extras.getBoolean("IS_ONLINE");
         }
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onSuccess() {
-                connectionStatus.setText("Finding Opponents");
-            }
 
-            @Override
-            public void onFailure(int i) {
-                connectionStatus.setText("Finding Failed");
-            }
-        });
+        if (isOnline) {
+            setContentView(R.layout.activity_wifi_connect);
+            context = this;
+            initialWork();
+            exqListener();
 
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                ActivityCompat.requestPermissions((Activity) context,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        1
+                );
+            }
+            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onSuccess() {
+                    connectionStatus.setText("Finding Opponents");
+                }
+
+                @Override
+                public void onFailure(int i) {
+                    connectionStatus.setText("Finding Failed");
+                }
+            });
+        } else {
+            setContentView(R.layout.activity_game_play);
+            initialWork();
+            createBoard();
+        }
     }
 
     Handler handler=new Handler(new Handler.Callback() {
@@ -430,7 +441,6 @@ public class WifiConnect extends Activity {
     int totalTurns = 0;
     int numOfCol;
     int numOfRow;
-    boolean isOnline = true;
 
     private void createBoard(){
         myGridLayout = (GridLayout)findViewById(R.id.myGrid);
@@ -446,22 +456,30 @@ public class WifiConnect extends Activity {
         chatMsg = (EditText) findViewById(R.id.chatMsg);
         btnChat = (Button) findViewById(R.id.chatButton);
 
-        btnChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                myChat.setText(chatMsg.getText());
-                String msg="2" + chatMsg.getText().toString();
-                sendReceive.write(msg.getBytes());
-                chatMsg.setText("");
-                try {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                } catch (Exception e) {
-                    // TODO: handle exception
-                }
+        if (isOnline == true) {
+            btnChat.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    myChat.setText(chatMsg.getText());
+                    String msg = "2" + chatMsg.getText().toString();
+                    sendReceive.write(msg.getBytes());
+                    chatMsg.setText("");
+                    try {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
 
-            }
-        });
+                }
+            });
+        }
+        else{
+            myChat.setVisibility(View.INVISIBLE);
+            opponentChat.setVisibility(View.INVISIBLE);
+            chatMsg.setVisibility(View.INVISIBLE);
+            btnChat.setVisibility(View.INVISIBLE);
+        }
 
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++){
@@ -493,10 +511,12 @@ public class WifiConnect extends Activity {
                             ////////////////////////////
                             //Send
                             ///////////////////////////
-                            String msg = "1" + String.valueOf(tView.getIdX()) +","+ String.valueOf(tView.getIdY());
-                            sendReceive.write(msg.toString().getBytes());
+                            if (isOnline == true) {
+                                String msg = "1" + String.valueOf(tView.getIdX()) + "," + String.valueOf(tView.getIdY());
+                                sendReceive.write(msg.toString().getBytes());
+                                turn = false;
+                            }
                             totalTurns++;
-                            turn = false;
                             myGridLayout.invalidate();
                         }
                     }

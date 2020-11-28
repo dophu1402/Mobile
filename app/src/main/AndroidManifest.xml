@@ -18,9 +18,6 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
         <activity android:name=".WifiConnect"/>
-        <activity
-            android:name=".GamePlay"
-            android:theme="@style/Theme.AppCompat" />
         <activity android:name=".SetUpConnection" />
         <activity android:name=".SplashActivity">
             <intent-filter>

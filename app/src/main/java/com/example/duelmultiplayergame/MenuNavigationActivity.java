@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class MenuNavigationActivity extends Activity {
     ListView listviewMenu;
-//    String[] pro = {"Yasuo"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
