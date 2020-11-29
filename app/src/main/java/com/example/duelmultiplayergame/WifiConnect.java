@@ -643,8 +643,8 @@ public class WifiConnect extends Activity {
 
         int countTop = 0;
         int countBottom = 0;
-        int posTop = currentPosX;
-        int posBottom = currentPosX;
+        int posTop = currentPosY;
+        int posBottom = currentPosY;
 
         for (int i = currentPosY - 1; i >= 0; i--) {
             if (myBoard[i][currentPosX].touchOn == true &&
@@ -676,8 +676,8 @@ public class WifiConnect extends Activity {
             return status;
         }
         else if((check == 5) && !(
-                ((myBoard[posTop - 1][currentPosX].player!=myBoard[currentPosY][currentPosX].player) && (posTop - 1 >= 0) && (myBoard[posTop - 1][currentPosX].touchOn == true))
-                        && ((myBoard[posBottom + 1][currentPosX].player!=myBoard[currentPosY][currentPosX].player) && (posBottom + 1 < numOfCol) && (myBoard[posBottom + 1][currentPosX].touchOn == true))
+                ((myBoard[posTop - 1][currentPosX].player!=myBoard[currentPosY][currentPosX].player) && (posTop - 1 >= 0) && (myBoard[posTop - 1][currentPosX].touchOn))
+                        && ((myBoard[posBottom + 1][currentPosX].player!=myBoard[currentPosY][currentPosX].player) && (posBottom + 1 < numOfCol) && (myBoard[posBottom + 1][currentPosX].touchOn))
         )) {
             setWinnerSquares(tempSquares);
             return status;
