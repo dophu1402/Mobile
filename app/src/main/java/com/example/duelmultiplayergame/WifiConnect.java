@@ -327,22 +327,8 @@ public class WifiConnect extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-/////////////flag
-        endGameBtnYes.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                restartGame = true;
-                restartGameTouched = true;
-                restartHandler();
-            }
-        });
 
-        endGameBtnNo.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                restartGame = false;
-                restartGameTouched = true;
-                restartHandler();
-            }
-        });
+
 
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -695,6 +681,21 @@ public class WifiConnect extends Activity {
                 }
         );
 
+        endGameBtnYes.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                restartGame = true;
+                restartGameTouched = true;
+                restartHandler();
+            }
+        });
+
+        endGameBtnNo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                restartGame = false;
+                restartGameTouched = true;
+                restartHandler();
+            }
+        });
 
     }
 
