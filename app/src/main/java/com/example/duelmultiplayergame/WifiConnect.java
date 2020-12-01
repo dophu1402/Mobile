@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,9 @@ public class WifiConnect extends Activity {
     ListView listView;
     TextView read_msg_box, connectionStatus, myChat, opponentChat;
     EditText writeMsg, chatMsg;
+
+    private int shortAnimationDuration;
+    LinearLayout endGameLinear;
 
     WifiManager wifiManager;
     WifiP2pManager mManager;
@@ -263,6 +267,8 @@ public class WifiConnect extends Activity {
         connectionStatus=(TextView) findViewById(R.id.connectionStatus);
         writeMsg=(EditText) findViewById(R.id.writeMsg);
 
+        endGameLinear=(LinearLayout) findViewById(R.id.endGameLayout);
+
         wifiManager= (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         mManager= (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
@@ -275,6 +281,10 @@ public class WifiConnect extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+
+        shortAnimationDuration = getResources().getInteger(
+                android.R.integer.config_shortAnimTime);
     }
 
     WifiP2pManager.PeerListListener peerListListener=new WifiP2pManager.PeerListListener() {
@@ -843,6 +853,20 @@ public class WifiConnect extends Activity {
 
     private void resultHandler(int winner)
     {
+        for(int yPos=0; yPos<numOfRow; yPos++){
+            for(int xPos=0; xPos<numOfCol; xPos++) {
+                myViews[yPos*numOfRow + xPos].setTouched();
+            }
+        }
+
+        endGameLinear.setAlpha(0f);
+        endGameLinear.setVisibility(View.VISIBLE);
+
+        endGameLinear.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
         if(winner == 1){
             Toast.makeText(this, "P1 WIN", Toast.LENGTH_SHORT).show();
         }

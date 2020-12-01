@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".WifiConnect"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/opponent_chat"
         android:layout_width="wrap_content"
@@ -72,4 +73,19 @@
         android:layout_alignParentEnd="true"
         android:text="Send"
         android:layout_alignParentRight="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ddffffff"
+        android:gravity="center"
+        android:visibility="gone"
+        android:id="@+id/endGameLayout">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/carologo"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 </RelativeLayout>

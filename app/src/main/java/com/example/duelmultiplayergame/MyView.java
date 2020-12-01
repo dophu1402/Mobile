@@ -31,6 +31,10 @@ public class MyView extends AppCompatButton {
         init();
     }
 
+    public void setTouched() {
+        touchOn = true;
+    }
+
     public MyView(Context context) {
         super(context);
         init();
