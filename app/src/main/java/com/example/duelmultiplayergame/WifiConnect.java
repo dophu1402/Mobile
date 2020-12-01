@@ -5,10 +5,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.inputmethodservice.Keyboard;
+import android.media.Image;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -27,6 +29,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -54,6 +58,12 @@ public class WifiConnect extends Activity {
     TextView read_msg_box, connectionStatus, myChat, opponentChat;
     EditText writeMsg, chatMsg;
 
+    boolean onlinePlayer; //true: p1, false: p2
+
+    boolean restartGame;
+    boolean restartGameTouched;
+    String restartOnlineStatus;
+
     private int shortAnimationDuration;
     LinearLayout endGameLinear;
 
@@ -63,6 +73,12 @@ public class WifiConnect extends Activity {
 
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
+
+    ImageView endGameImg;
+    TextView endGameTextView;
+    LinearLayout endGameSubLinear;
+    ImageButton endGameBtnYes;
+    ImageButton endGameBtnNo;
 
     List<WifiP2pDevice> peers=new ArrayList<WifiP2pDevice>();
     String[] deviceNameArray;
@@ -150,6 +166,7 @@ public class WifiConnect extends Activity {
                                     myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
                                 }
                                 currentSquare = new ChessSquare(true, player, myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY());
+
                                 totalTurns++;
                                 int status = checkWinner(myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY());
 
@@ -168,8 +185,30 @@ public class WifiConnect extends Activity {
                             }
                             opponentChat.setText(tempMsg);
                         }
-                        else{
-                            //do nothing
+                        ////////////////////////////flag
+                        else if (tempMsg.charAt(0) == '3')
+                        {
+                            tempMsg = tempMsg.substring(1);
+                            if (tempMsg.length() < 1) {
+                                break;
+                            }
+                            restartOnlineStatus = tempMsg;
+                            if (restartOnlineStatus == "yes"){
+                                if(restartGameTouched) {
+                                    if(restartGame){
+                                        setResetGame();
+                                        endGameLinear.setVisibility(View.GONE);
+                                    }
+                                }
+                            }
+                            else if (restartOnlineStatus == "no"){
+                                Toast.makeText(context,"Opponent disconnected", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
+                                finish();
+                            }
+
+
+
                         }
                     }
                     //read_msg_box.setText(tempMsg);
@@ -259,6 +298,8 @@ public class WifiConnect extends Activity {
     }
 
     private void initialWork() {
+        restartGameTouched = false;
+        restartOnlineStatus = "";
         btnOnOff=(Button) findViewById(R.id.onOff);
         btnDiscover=(Button) findViewById(R.id.discover);
         btnSend=(Button) findViewById(R.id.sendButton);
@@ -268,6 +309,11 @@ public class WifiConnect extends Activity {
         writeMsg=(EditText) findViewById(R.id.writeMsg);
 
         endGameLinear=(LinearLayout) findViewById(R.id.endGameLayout);
+        endGameImg=(ImageView) findViewById(R.id.endGameImg);
+        endGameTextView=(TextView) findViewById(R.id.endGameTextView);
+        endGameSubLinear=(LinearLayout) findViewById(R.id.endGameSubLayout);
+        endGameBtnYes=(ImageButton) findViewById(R.id.yesBtn);
+        endGameBtnNo=(ImageButton) findViewById(R.id.noBtn);
 
         wifiManager= (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -281,7 +327,22 @@ public class WifiConnect extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+/////////////flag
+        endGameBtnYes.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                restartGame = true;
+                restartGameTouched = true;
+                restartHandler();
+            }
+        });
 
+        endGameBtnNo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                restartGame = false;
+                restartGameTouched = true;
+                restartHandler();
+            }
+        });
 
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -443,6 +504,67 @@ public class WifiConnect extends Activity {
         }
     }
 
+    private void setResetGame()
+    {
+        totalTurns = 0;
+        restartGameTouched = false;
+        restartOnlineStatus = "";
+        for(int yPos=0; yPos<numOfRow; yPos++){
+            for(int xPos=0; xPos<numOfCol; xPos++) {
+                myViews[yPos*numOfRow + xPos].reset();
+            }
+        }
+    }
+
+    private  void restartHandler()
+    {
+        ////////flag
+        if (isOnline == true) {
+            if(restartOnlineStatus.length()!=0) {
+                if(restartGame && restartOnlineStatus == "yes"){
+                    setResetGame();
+                    endGameLinear.setVisibility(View.GONE);
+                }
+                else if (restartGame && restartOnlineStatus == "no"){
+                    Toast.makeText(context,"Opponent disconnected", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
+                    finish();
+                }
+                else{
+                    startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
+                    finish();
+                }
+            }
+            else{
+                if(restartGame){
+                    String msg = "3yes";
+                    sendReceive.write(msg.toString().getBytes());
+                    endGameTextView.setText("Waiting for opponent");
+                    endGameBtnYes.setVisibility(View.GONE);
+                    endGameBtnNo.setVisibility(View.GONE);
+                    endGameImg.setVisibility(View.GONE);
+                }
+                else{
+                    String msg = "3no";
+                    sendReceive.write(msg.toString().getBytes());
+                    startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
+                    finish();
+                }
+            }
+
+        }
+        else {
+            if(restartGame){
+                setResetGame();
+                endGameLinear.setVisibility(View.GONE);
+            }
+            else{
+                startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
+                finish();
+            }
+        }
+
+    }
 
     //////////////////////////////////////////////////////////////////
     private ScaleGestureDetector mScaleGestureDetector;
@@ -518,6 +640,7 @@ public class WifiConnect extends Activity {
                             if (status!=0){
                                 resultHandler(status);
                             }
+
                             ////////////////////////////
                             //Send
                             ///////////////////////////
@@ -525,6 +648,13 @@ public class WifiConnect extends Activity {
                                 String msg = "1" + String.valueOf(tView.getIdX()) + "," + String.valueOf(tView.getIdY());
                                 sendReceive.write(msg.toString().getBytes());
                                 turn = false;
+                            }
+
+                            if(totalTurns == 0) {
+                                onlinePlayer = true;
+                            }
+                            else if(totalTurns == 1) {
+                                onlinePlayer = false;
                             }
                             totalTurns++;
                             myGridLayout.invalidate();
@@ -859,6 +989,11 @@ public class WifiConnect extends Activity {
             }
         }
 
+        endGameTextView.setText("(Do you want to play again?)");
+        endGameBtnYes.setVisibility(View.VISIBLE);
+        endGameBtnNo.setVisibility(View.VISIBLE);
+        endGameImg.setVisibility(View.VISIBLE);
+
         endGameLinear.setAlpha(0f);
         endGameLinear.setVisibility(View.VISIBLE);
 
@@ -867,12 +1002,29 @@ public class WifiConnect extends Activity {
                 .setDuration(shortAnimationDuration)
                 .setListener(null);
 
-        if(winner == 1){
-            Toast.makeText(this, "P1 WIN", Toast.LENGTH_SHORT).show();
+        if (isOnline){
+            if(winner == 1 && onlinePlayer == true) {
+                endGameImg.setImageResource(R.drawable.youwin);
+            }
+            else if(winner == 1 && onlinePlayer == false) {
+                endGameImg.setImageResource(R.drawable.youlose);
+            }
+            else if(winner == 2 && onlinePlayer == true) {
+                endGameImg.setImageResource(R.drawable.youlose);
+            }
+            else if(winner == 2 && onlinePlayer == false) {
+                endGameImg.setImageResource(R.drawable.youwin);
+            }
         }
-        else if(winner == 2){
-            Toast.makeText(this, "P2 WIN", Toast.LENGTH_SHORT).show();
+        else{
+            if(winner == 1){
+                endGameImg.setImageResource(R.drawable.redwin);
+            }
+            else if(winner == 2){
+                endGameImg.setImageResource(R.drawable.bluewin);
+            }
         }
+
     }
 
 //    private boolean isEndHorizontal(int currentPosX)
@@ -880,15 +1032,4 @@ public class WifiConnect extends Activity {
 //
 //    }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-        }
-    }
 }

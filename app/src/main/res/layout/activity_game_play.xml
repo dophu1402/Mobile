@@ -79,13 +79,63 @@
         android:layout_height="match_parent"
         android:background="#ddffffff"
         android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone"
         android:id="@+id/endGameLayout">
 
+
+
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
             android:src="@drawable/carologo"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:id="@+id/endGameImg"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/babyblue"
+            android:textSize="30dp"
+            android:text="(Do you want to play again?)"
+            android:id="@+id/endGameTextView"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:id="@+id/endGameSubLayout">
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:padding="0dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="-10dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:id="@+id/yesBtn"
+                android:src="@drawable/yes"
+                />
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:padding="0dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="-10dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:id="@+id/noBtn"
+                android:src="@drawable/no"
+                />
+
+        </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>
