@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -34,12 +36,25 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
         linearwifi = (LinearLayout) this.findViewById(R.id.linearwifi);
         linearnonewifi = (LinearLayout) this.findViewById(R.id.linearnonewifi);
 
+//        linearnonewifi.setOnTouchListener(new HoldButtonHandler(400, 100, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("test: ", "onClick: ");
+//            }
+//        }));
+        btnPlayonOffline.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+
         btnPlayonOffline.setOnClickListener(this);
         btnPlayonOnline.setOnClickListener(this);
         btnBackConnect.setOnClickListener(this);
 
         linearwifi.setOnClickListener(this);
-        linearnonewifi.setOnClickListener(this);
+//        linearnonewifi.setOnClickListener(this);
 
         bundle = getIntent().getExtras();
 
@@ -54,7 +69,7 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
             case R.id.btnPlayonOffline:
             case R.id.linearnonewifi:
                 if (bundle.getInt("CodeGame") == Constant_Name_Game.CARO.getValue()){
-                    Toast.makeText(this,"Caro", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"none wifi", Toast.LENGTH_SHORT).show();
                     intent = new Intent(SetUpConnection.this, GamePlay.class);
                 }
                 if (intent != null){
@@ -66,7 +81,7 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
             case R.id.btnPlayonOnline:
             case R.id.linearwifi:
                 if (bundle.getInt("CodeGame") == Constant_Name_Game.CARO.getValue()){
-                    Toast.makeText(this,"Caro", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"wifi", Toast.LENGTH_SHORT).show();
                     intent = new Intent(SetUpConnection.this, WifiConnect.class);
                 }
                 if (intent != null){
