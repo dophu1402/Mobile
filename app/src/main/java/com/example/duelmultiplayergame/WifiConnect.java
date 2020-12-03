@@ -50,7 +50,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WifiConnect extends Activity {
+public class WifiConnect extends Activity implements View.OnClickListener {
 
     Context context;
     Button btnOnOff, btnDiscover, btnSend, btnChat;
@@ -59,6 +59,9 @@ public class WifiConnect extends Activity {
     EditText writeMsg, chatMsg;
 
     LinearLayout messchat;
+
+    LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn;
+    Boolean identityPlayer;
 
     boolean onlinePlayer; //true: p1, false: p2
 
@@ -317,6 +320,11 @@ public class WifiConnect extends Activity {
         endGameBtnYes=(ImageButton) findViewById(R.id.yesBtn);
         endGameBtnNo=(ImageButton) findViewById(R.id.noBtn);
 
+        redSurrenderBtn = (LinearLayout)this.findViewById(R.id.redSurrenderBtn);
+        redBackwardBtn = (LinearLayout) this.findViewById(R.id.redBackwardBtn);
+        blueSurrenderBtn = (LinearLayout)this.findViewById(R.id.blueSurrenderBtn);
+        blueBackwardBtn = (LinearLayout) this.findViewById(R.id.blueBackwardBtn);
+
         wifiManager= (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         mManager= (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
@@ -400,6 +408,22 @@ public class WifiConnect extends Activity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.redSurrenderBtn:
+                this.resultHandler(Constant_Player.RED.getValue());
+                break;
+            case R.id.blueSurrenderBtn:
+                this.resultHandler(Constant_Player.BLUE.getValue());
+                break;
+            case R.id.redBackwardBtn:
+                break;
+            case R.id.blueBackwardBtn:
+                break;
+        }
     }
 
     public class ServerClass extends Thread{
