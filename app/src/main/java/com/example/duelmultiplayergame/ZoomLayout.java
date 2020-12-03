@@ -75,7 +75,7 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
                 //if (mode == Mode.DRAG) {
                 counter++;
                 Log.i(TAG, "ACTION test" + counter);
-                if (counter <10){
+                if (counter <5){
                     startX = motionEvent.getX() - prevDx;
                     startY = motionEvent.getY() - prevDy;
                     return false;

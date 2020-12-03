@@ -31,6 +31,17 @@ public class MyView extends AppCompatButton {
         init();
     }
 
+    public void setTouched() {
+        touchOn = true;
+    }
+
+    public void reset(){
+        touchOn = false;
+        player = 0;
+        clicking = false;
+        winner = false;
+    }
+
     public MyView(Context context) {
         super(context);
         init();
@@ -125,7 +136,7 @@ public class MyView extends AppCompatButton {
             }
             invalidate();
         } else {
-            //do nothing
+            this.setBackgroundResource(R.drawable.carosquare);
         }
     }
 

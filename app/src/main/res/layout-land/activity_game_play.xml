@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GamePlay"
     android:orientation="horizontal">
     <com.example.duelmultiplayergame.ZoomLayout
         android:layout_width="match_parent"
