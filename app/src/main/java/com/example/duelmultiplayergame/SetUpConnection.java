@@ -69,11 +69,11 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
             case R.id.btnPlayonOffline:
             case R.id.linearnonewifi:
                 if (bundle.getInt("CodeGame") == Constant_Name_Game.CARO.getValue()){
-                    Toast.makeText(this,"none wifi", Toast.LENGTH_SHORT).show();
-                    intent = new Intent(SetUpConnection.this, GamePlay.class);
-                    // Toast.makeText(this,"Caro", Toast.LENGTH_SHORT).show();
-                    // intent = new Intent(SetUpConnection.this, WifiConnect.class);
-                    // intent.putExtra("IS_ONLINE", false);
+//                    Toast.makeText(this,"none wifi", Toast.LENGTH_SHORT).show();
+//                    intent = new Intent(SetUpConnection.this, GamePlay.class);
+                     Toast.makeText(this,"Caro", Toast.LENGTH_SHORT).show();
+                     intent = new Intent(SetUpConnection.this, WifiConnect.class);
+                     intent.putExtra("IS_ONLINE", false);
                 }
                 if (intent != null){
                     startActivity(intent);

@@ -58,6 +58,8 @@ public class WifiConnect extends Activity {
     TextView read_msg_box, connectionStatus, myChat, opponentChat;
     EditText writeMsg, chatMsg;
 
+    LinearLayout messchat;
+
     boolean onlinePlayer; //true: p1, false: p2
 
     boolean restartGame;
@@ -573,6 +575,7 @@ public class WifiConnect extends Activity {
         opponentChat = (TextView) findViewById(R.id.opponent_chat);
         chatMsg = (EditText) findViewById(R.id.chatMsg);
         btnChat = (Button) findViewById(R.id.chatButton);
+        messchat = (LinearLayout) this.findViewById(R.id.messchat);
 
         if (isOnline == true) {
             btnChat.setOnClickListener(new View.OnClickListener() {
@@ -597,6 +600,7 @@ public class WifiConnect extends Activity {
             opponentChat.setVisibility(View.INVISIBLE);
             chatMsg.setVisibility(View.INVISIBLE);
             btnChat.setVisibility(View.INVISIBLE);
+            messchat.setVisibility(View.GONE);
         }
 
         for(int yPos=0; yPos<numOfRow; yPos++){
