@@ -7,6 +7,7 @@ public enum Constant_Player {
     private Constant_Player(int value) {
         this.value = value;
     }
+
     public int getValue(){
         return value;
     }

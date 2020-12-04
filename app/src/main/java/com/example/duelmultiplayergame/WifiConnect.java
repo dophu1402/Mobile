@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.inputmethodservice.Keyboard;
 import android.media.Image;
 import android.net.wifi.WifiManager;
@@ -33,6 +34,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +63,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     LinearLayout messchat;
 
     LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn;
+    RelativeLayout BackgroundGame;
 
     Boolean identityPlayer;
     HistoryPlay historyPlay;
@@ -182,6 +185,12 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
                                 if (status!=0){
                                     resultHandler(status);
+                                    if (status == Constant_Player.RED.getValue()){  // the winner is red, red will start firstly
+                                        identityPlayer = true;
+                                    }
+                                    else if (status == Constant_Player.BLUE.getValue()){    // otherwise
+                                        identityPlayer = false;
+                                    }
                                 }
                             }
                             catch (Exception e){
@@ -309,6 +318,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     // khoi tao bien
     private void initialWork() {
         this.historyPlay = new HistoryPlay();
+        this.identityPlayer = (Constant_Player.RED.getValue() == Constant_Player.RED.getValue());   // emulator that we start with red
+
 
         restartGameTouched = false;
         restartOnlineStatus = "";
@@ -331,6 +342,9 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         redBackwardBtn = (LinearLayout) this.findViewById(R.id.redBackwardBtn);
         blueSurrenderBtn = (LinearLayout)this.findViewById(R.id.blueSurrenderBtn);
         blueBackwardBtn = (LinearLayout) this.findViewById(R.id.blueBackwardBtn);
+
+        BackgroundGame = (RelativeLayout) this.findViewById(R.id.BackgroundGame);
+        this.setupBackgroundColor(this.identityPlayer?Constant_Player.RED.getValue():Constant_Player.BLUE.getValue());
 
         redSurrenderBtn.setOnClickListener(this);
         redBackwardBtn.setOnClickListener(this);
@@ -355,6 +369,16 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
     }
+
+    private void setupBackgroundColor(int typePlayer){
+        if (typePlayer == Constant_Player.RED.getValue()){
+            this.BackgroundGame.setBackgroundColor(Color.argb(255,252, 62, 48));
+        }
+        else if (typePlayer == Constant_Player.BLUE.getValue()){
+            this.BackgroundGame.setBackgroundColor(Color.argb(255,48, 150, 252));
+        }
+    }
+
     // list thiet bi duoc tim thay
     WifiP2pManager.PeerListListener peerListListener=new WifiP2pManager.PeerListListener() {
         @Override
@@ -545,6 +569,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
     private  void restartHandler()
     {
+        this.setupBackgroundColor(this.identityPlayer?Constant_Player.RED.getValue():Constant_Player.BLUE.getValue());
+
         ////////flag
         if (isOnline == true) {
             if(restartOnlineStatus.length()!=0) {
@@ -655,12 +681,21 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                     public void onClick(View v) {
                         if (tView.getToggle() == false && turn == true){
                             int player; //  nhan dien player
+                            int firstPlayer = (identityPlayer?1:0) * Constant_Player.RED.getValue() + (identityPlayer?0:1) * Constant_Player.BLUE.getValue();
+                            int secondPlayer = (identityPlayer?1:0) * Constant_Player.BLUE.getValue() + (identityPlayer?0:1) * Constant_Player.RED.getValue();
                             if (totalTurns % 2 == 0) {
-                                player = 1;
+//                                player = 1;
+                                /* identityPlayer presents for who start the game*/
+                                /* true means red and false means blue*/
+                                player = firstPlayer;
+                                setupBackgroundColor(secondPlayer);
                             }
                             else {
-                                player = 2;
+//                                player = 2;
+                                player = secondPlayer;
+                                setupBackgroundColor(firstPlayer);
                             }
+
                             boolean isToggled = true;
                             historyPlay.add(new Cell(x, y, player));
 //                            historyPlay.showList();
@@ -674,6 +709,12 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
                             if (status!=0){
                                 resultHandler(status);
+                                if (status == Constant_Player.RED.getValue()){  // the winner is red, red will start firstly
+                                    identityPlayer = true;
+                                }
+                                else if (status == Constant_Player.BLUE.getValue()){    // otherwise
+                                    identityPlayer = false;
+                                }
                             }
 
                             ////////////////////////////
