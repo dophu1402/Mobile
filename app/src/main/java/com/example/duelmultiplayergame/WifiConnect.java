@@ -80,7 +80,10 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
-
+    
+    MyView[] myViews;
+    GridLayout myGridLayout;
+    
     ImageView endGameImg;
     TextView endGameTextView;
     LinearLayout endGameSubLinear;
@@ -92,8 +95,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     WifiP2pDevice[] deviceArray;
 
     static final int MESSAGE_READ=1;
-    boolean turn = true;
-    boolean isOnline;
+    boolean turn = true; //kiem tra luot choi
+    boolean isOnline; // online mode
     ChessSquare currentSquare;
 
     ServerClass serverClass;
@@ -105,13 +108,13 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            isOnline = extras.getBoolean("IS_ONLINE");
+            isOnline = extras.getBoolean("IS_ONLINE"); //kiem tra che do online hay offline
         }
-
+        
         if (isOnline) {
             setContentView(R.layout.activity_wifi_connect);
             context = this;
-            initialWork();
+            initialWork(); // ham khoi tao bien
             exqListener();
 
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -136,17 +139,17 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             });
         } else {
             setContentView(R.layout.activity_game_play);
-            initialWork();
-            createBoard();
+            initialWork(); //khoi tao cac bien
+            createBoard(); // tao ban co
         }
     }
-
+    ///Massage handler
     Handler handler=new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what)
             {
-                case MESSAGE_READ:
+                case MESSAGE_READ: //flag = 1: danh co, flag = 2: chat, flag = 3: ket noi status
                     byte[] readBuff= (byte[]) msg.obj;
                     String tempMsg=new String(readBuff,0,msg.arg1);
                     if (tempMsg.length() > 1){
@@ -224,7 +227,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             return true;
         }
     });
-
+    //setup connect
     private void exqListener() {
         btnOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,7 +268,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 });
             }
         });
-
+        //click vao 1 thiet bi tren list
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -294,7 +297,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 });
             }
         });
-
+        ////phan nay bo
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -303,7 +306,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             }
         });
     }
-
+    // khoi tao bien
     private void initialWork() {
         this.historyPlay = new HistoryPlay();
 
@@ -347,7 +350,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
     }
-
+    // list thiet bi duoc tim thay
     WifiP2pManager.PeerListListener peerListListener=new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peerList) {
@@ -378,7 +381,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             }
         }
     };
-
+    //Xu ly khi thiet lap ket noi
     WifiP2pManager.ConnectionInfoListener connectionInfoListener=new WifiP2pManager.ConnectionInfoListener() {
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
@@ -429,7 +432,9 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 break;
         }
     }
-
+    ////////////////////////////
+    ///Socket - server, client
+    ////////////////////////////
     public class ServerClass extends Thread{
         Socket socket;
         ServerSocket serverSocket;
@@ -519,7 +524,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             }
         }
     }
-
+    //////////////////////////////////////////////////////
     private void setResetGame()
     {
         totalTurns = 0;
@@ -583,13 +588,16 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     }
 
     //////////////////////////////////////////////////////////////////
-    private ScaleGestureDetector mScaleGestureDetector;
+    private ScaleGestureDetector mScaleGestureDetector; //phat hien scale
     int pWidth;
     int pHeight;
     int totalTurns = 0;
     int numOfCol;
     int numOfRow;
-
+    
+    /////////////////
+    /// xu ly ban co (ve, setonlick)
+    /////////////////
     private void createBoard(){
         myGridLayout = (GridLayout)findViewById(R.id.myGrid);
         myGridLayout.setUseDefaultMargins(false);
@@ -604,7 +612,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         chatMsg = (EditText) findViewById(R.id.chatMsg);
         btnChat = (Button) findViewById(R.id.chatButton);
         messchat = (LinearLayout) this.findViewById(R.id.messchat);
-
+        ////Ve view cua tung che do online hay offline
         if (isOnline == true) {
             btnChat.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -630,10 +638,10 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             btnChat.setVisibility(View.INVISIBLE);
             messchat.setVisibility(View.GONE);
         }
-
+        /// tao ban co kich thuoc = numOfRow * numOfCol
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++){
-                final MyView tView = new MyView(myGridLayout.getContext(), xPos, yPos);
+                final MyView tView = new MyView(myGridLayout.getContext(), xPos, yPos);// 1 o tren ban co
                 final int x = xPos;
                 final int y = yPos;
                 tView.setOnClickListener(new View.OnClickListener() {
@@ -668,7 +676,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                             if (isOnline == true) {
                                 String msg = "1" + String.valueOf(tView.getIdX()) + "," + String.valueOf(tView.getIdY());
                                 sendReceive.write(msg.toString().getBytes());
-                                turn = false;
+                                turn = false; //doi luot choi
                             }
 
                             if(totalTurns == 0) {
@@ -687,6 +695,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 myGridLayout.addView(tView);
             }
         }
+        
+        // Ve ban co
         myGridLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener(){
                     @Override
@@ -733,10 +743,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         });
 
     }
-
-    MyView[] myViews;
-
-    GridLayout myGridLayout;
 
     private int checkWinner(int currentPosX, int currentPosY)
     {
