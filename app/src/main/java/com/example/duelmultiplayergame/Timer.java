@@ -6,6 +6,7 @@ public class Timer {
 
     private final long MAX_TIME = 10000;
     private long millisUntil = MAX_TIME;
+    private boolean isTimeRunning = false;
     private String str = String.format("%.2f",MAX_TIME);
 
     private CountDownTimer timer = new CountDownTimer(MAX_TIME, 1) {
@@ -13,11 +14,13 @@ public class Timer {
         public void onTick(long millisUntilFinished) {
             millisUntil = millisUntilFinished;
             UpdateTime();
+            isTimeRunning = true;
         }
 
         @Override
         public void onFinish() {
             UpdateTime();
+            isTimeRunning = false;
         }
     };
 
@@ -26,19 +29,28 @@ public class Timer {
         str = String.format("%.2",s);
     }
 
+    //Trả về chuỗi thời gian
     public String GetTimeString() {
         return str;
     }
 
+    //Trả về thời gian còn lại.
     public float GetTimeSec() {
         return (float) millisUntil / 1000;
     }
 
+    //Bắt đầu tính giờ
     public void Start() {
         timer.start();
     }
 
+    //Dừng tính giờ
     public void Stop(){
         timer.cancel();
+    }
+
+    //Tín hiệu thời gian có còn chạy hay không, true là đang chạy.
+    public boolean isRunning() {
+        return isTimeRunning;
     }
 }
