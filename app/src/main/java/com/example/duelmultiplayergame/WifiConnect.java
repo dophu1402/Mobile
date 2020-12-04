@@ -329,6 +329,11 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         blueSurrenderBtn = (LinearLayout)this.findViewById(R.id.blueSurrenderBtn);
         blueBackwardBtn = (LinearLayout) this.findViewById(R.id.blueBackwardBtn);
 
+        redSurrenderBtn.setOnClickListener(this);
+        redBackwardBtn.setOnClickListener(this);
+        blueSurrenderBtn.setOnClickListener(this);
+        blueBackwardBtn.setOnClickListener(this);
+
         wifiManager= (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         mManager= (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
@@ -419,6 +424,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         switch (v.getId()){
             case R.id.redSurrenderBtn:
                 this.resultHandler(Constant_Player.RED.getValue());
+                Toast.makeText(this, "Yasuo", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.blueSurrenderBtn:
                 this.resultHandler(Constant_Player.BLUE.getValue());

@@ -40,6 +40,7 @@ public class MyView extends AppCompatButton {
         player = 0;
         clicking = false;
         winner = false;
+
     }
 
     public MyView(Context context) {

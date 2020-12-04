@@ -64,7 +64,9 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnBackConnect:
-                SetUpConnection.super.onBackPressed();
+//                SetUpConnection.super.onBackPressed();
+                startActivity(new Intent(SetUpConnection.this, MenuNavigationActivity.class));
+                finish();
                 break;
             case R.id.btnPlayonOffline:
             case R.id.linearnonewifi:
@@ -77,6 +79,7 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
                 }
                 if (intent != null){
                     startActivity(intent);
+                    finish();
                 }
                 else {
                 }
@@ -90,6 +93,7 @@ public class SetUpConnection extends Activity implements View.OnClickListener {
                 }
                 if (intent != null){
                     startActivity(intent);
+                    finish();
                 }
                 else {
                 }
