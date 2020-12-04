@@ -21,6 +21,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -448,17 +449,48 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        final int idRedSurrenderBtn = R.id.redSurrenderBtn;
+        final int idBlueSurrenderBtn = R.id.blueSurrenderBtn;
+        final int idRedBackwardBtn = R.id.redBackwardBtn;
+        final int idBlueBackwardBtn = R.id.blueBackwardBtn;
         switch (v.getId()){
-            case R.id.redSurrenderBtn:
+            case idRedSurrenderBtn:
                 this.resultHandler(Constant_Player.RED.getValue());
-                Toast.makeText(this, "Yasuo", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.blueSurrenderBtn:
+            case idBlueSurrenderBtn:
                 this.resultHandler(Constant_Player.BLUE.getValue());
                 break;
-            case R.id.redBackwardBtn:
+            case idRedBackwardBtn:
+                /* is in blue turn: person who start is blue and turn is even and otherwise ==> red want to take cell again*/
+                if ((!this.identityPlayer && (this.totalTurns % 2 == 0)) || (this.identityPlayer && (this.totalTurns % 2 == 1))){
+//                    Log.d("CheckBackward", "onClick: Blue");
+                    Cell cell = this.historyPlay.getLastItem();
+
+                    if (cell != null){
+                        myViews[cell.getY() * numOfRow + cell.getX()].reset();
+                        this.historyPlay.pop();
+                        totalTurns -= 1;
+
+                        /* change to red turn */
+                        this.setupBackgroundColor(Constant_Player.RED.getValue());
+                    }
+                }
                 break;
-            case R.id.blueBackwardBtn:
+            case idBlueBackwardBtn:
+                /* is in red turn: person who start is red and turn is even and otherwise ==> Blue want to take cell again*/
+                if ((this.identityPlayer && (this.totalTurns % 2 == 0)) || (!this.identityPlayer && (this.totalTurns % 2 == 1))){
+//                    Log.d("CheckBackward", "onClick: Red");
+                    Cell cell = this.historyPlay.getLastItem();
+
+                    if (cell != null){
+                        myViews[cell.getY() * numOfRow + cell.getX()].reset();
+                        this.historyPlay.pop();
+                        totalTurns -= 1;
+
+                        /* change to red turn */
+                        this.setupBackgroundColor(Constant_Player.BLUE.getValue());
+                    }
+                }
                 break;
         }
     }

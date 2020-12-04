@@ -40,7 +40,7 @@ public class MyView extends AppCompatButton {
         player = 0;
         clicking = false;
         winner = false;
-
+        this.setBackgroundResource(0);
     }
 
     public MyView(Context context) {

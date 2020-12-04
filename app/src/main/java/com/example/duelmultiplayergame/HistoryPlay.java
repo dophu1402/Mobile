@@ -62,14 +62,20 @@ public class HistoryPlay {
 //        Log.d("CELL", "pop: " + Integer.toString(cell.x) + " - " + Integer.toString(cell.y));
     }
 
-    public Cell pop(){
+    public void pop(){
+        if (!this.arrayList.isEmpty()){
+            this.arrayList.remove(this.arrayList.size() -1);
+        }
+        else {
+            // do nothing
+        }
+    }
+    public Cell getLastItem(){
         if (this.arrayList.isEmpty()){
             return null;
         }
         else {
             Cell cell = this.arrayList.get(this.arrayList.size() -1);
-            Log.d("TAG", "pop: " + Integer.toString(cell.PlayerChoose));
-            this.arrayList.remove(this.arrayList.size() -1);
             return cell;
         }
     }
