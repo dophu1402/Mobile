@@ -61,7 +61,9 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     LinearLayout messchat;
 
     LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn;
+
     Boolean identityPlayer;
+    HistoryPlay historyPlay;
 
     boolean onlinePlayer; //true: p1, false: p2
 
@@ -303,6 +305,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     }
 
     private void initialWork() {
+        this.historyPlay = new HistoryPlay();
+
         restartGameTouched = false;
         restartOnlineStatus = "";
         btnOnOff=(Button) findViewById(R.id.onOff);
@@ -630,11 +634,13 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++){
                 final MyView tView = new MyView(myGridLayout.getContext(), xPos, yPos);
+                final int x = xPos;
+                final int y = yPos;
                 tView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (tView.getToggle() == false && turn == true){
-                            int player;
+                            int player; //  nhan dien player
                             if (totalTurns % 2 == 0) {
                                 player = 1;
                             }
@@ -642,7 +648,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                 player = 2;
                             }
                             boolean isToggled = true;
-
+                            historyPlay.add(new Cell(x, y, player));
+//                            historyPlay.showList();
                             if(currentSquare != null) {
                                 myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
                             }
