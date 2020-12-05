@@ -56,14 +56,14 @@ import java.util.List;
 public class WifiConnect extends Activity implements View.OnClickListener {
 
     Context context;
-    Button btnOnOff, btnDiscover, btnSend, btnChat;
+    Button btnOnOff, btnDiscover, btnSend, btnChat, buttonBack;
     ListView listView;
     TextView read_msg_box, connectionStatus, myChat, opponentChat;
     EditText writeMsg, chatMsg;
 
     LinearLayout messchat;
 
-    LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn;
+    LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn, opponentArea;
     RelativeLayout BackgroundGame;
 
     Boolean identityPlayer;
@@ -120,6 +120,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             context = this;
             initialWork(); // ham khoi tao bien
             exqListener();
+
+            buttonBack.setOnClickListener(this);
 
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -318,15 +320,13 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     }
     // khoi tao bien
     private void initialWork() {
-        this.historyPlay = new HistoryPlay();
-        this.identityPlayer = (Constant_Player.RED.getValue() == Constant_Player.RED.getValue());   // emulator that we start with red
-
 
         restartGameTouched = false;
         restartOnlineStatus = "";
         btnOnOff=(Button) findViewById(R.id.onOff);
         btnDiscover=(Button) findViewById(R.id.discover);
         btnSend=(Button) findViewById(R.id.sendButton);
+        buttonBack = (Button) this.findViewById(R.id.buttonBack);
         listView=(ListView) findViewById(R.id.peerListView);
         read_msg_box=(TextView) findViewById(R.id.readMsg);
         connectionStatus=(TextView) findViewById(R.id.connectionStatus);
@@ -338,19 +338,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         endGameSubLinear=(LinearLayout) findViewById(R.id.endGameSubLayout);
         endGameBtnYes=(ImageButton) findViewById(R.id.yesBtn);
         endGameBtnNo=(ImageButton) findViewById(R.id.noBtn);
-
-        redSurrenderBtn = (LinearLayout)this.findViewById(R.id.redSurrenderBtn);
-        redBackwardBtn = (LinearLayout) this.findViewById(R.id.redBackwardBtn);
-        blueSurrenderBtn = (LinearLayout)this.findViewById(R.id.blueSurrenderBtn);
-        blueBackwardBtn = (LinearLayout) this.findViewById(R.id.blueBackwardBtn);
-
-        BackgroundGame = (RelativeLayout) this.findViewById(R.id.BackgroundGame);
-        this.setupBackgroundColor(this.identityPlayer?Constant_Player.RED.getValue():Constant_Player.BLUE.getValue());
-
-        redSurrenderBtn.setOnClickListener(this);
-        redBackwardBtn.setOnClickListener(this);
-        blueSurrenderBtn.setOnClickListener(this);
-        blueBackwardBtn.setOnClickListener(this);
 
         wifiManager= (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -453,6 +440,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         final int idBlueSurrenderBtn = R.id.blueSurrenderBtn;
         final int idRedBackwardBtn = R.id.redBackwardBtn;
         final int idBlueBackwardBtn = R.id.blueBackwardBtn;
+        final int idButtonBack = R.id.buttonBack;
         switch (v.getId()){
             case idRedSurrenderBtn:
                 this.resultHandler(Constant_Player.RED.getValue());
@@ -492,6 +480,9 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                     }
                 }
                 break;
+            case idButtonBack:
+                startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
+                finish();
         }
     }
     ////////////////////////////
@@ -671,6 +662,25 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         numOfRow = myGridLayout.getRowCount();
         myViews = new MyView[numOfCol*numOfRow];
 
+        this.historyPlay = new HistoryPlay();
+        this.identityPlayer = (Constant_Player.RED.getValue() == Constant_Player.RED.getValue());   // emulator that we start with red
+
+        redSurrenderBtn = (LinearLayout)this.findViewById(R.id.redSurrenderBtn);
+        redBackwardBtn = (LinearLayout) this.findViewById(R.id.redBackwardBtn);
+        blueSurrenderBtn = (LinearLayout)this.findViewById(R.id.blueSurrenderBtn);
+        blueBackwardBtn = (LinearLayout) this.findViewById(R.id.blueBackwardBtn);
+
+        opponentArea = (LinearLayout) this.findViewById(R.id.opponentArea);
+
+        BackgroundGame = (RelativeLayout) this.findViewById(R.id.BackgroundGame);
+
+        redSurrenderBtn.setOnClickListener(this);
+        redBackwardBtn.setOnClickListener(this);
+        blueSurrenderBtn.setOnClickListener(this);
+        blueBackwardBtn.setOnClickListener(this);
+
+        this.setupBackgroundColor(this.identityPlayer?Constant_Player.RED.getValue():Constant_Player.BLUE.getValue());
+
         myChat = (TextView) findViewById(R.id.my_chat);
         opponentChat = (TextView) findViewById(R.id.opponent_chat);
         chatMsg = (EditText) findViewById(R.id.chatMsg);
@@ -694,6 +704,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
                 }
             });
+            opponentArea.setVisibility(View.GONE);
         }
         else{
             myChat.setVisibility(View.INVISIBLE);
