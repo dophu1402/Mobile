@@ -6,12 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MenuNavigationActivity"
-    android:background="@color/whiteLight">
+    android:background="@color/whiteLight"
+    >
 
     <ListView
         android:id="@+id/listviewMenu"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="30dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="30sp">

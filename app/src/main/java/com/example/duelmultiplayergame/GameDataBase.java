@@ -7,9 +7,9 @@ import android.graphics.Color;
 import java.util.ArrayList;
 
 public class GameDataBase {
-    public String[] nameGames = { "Caro", "Coming Soon"};
-    public Integer[] wallpapers = { R.drawable.menucaro, R.drawable.menuchess };
-    public Integer[] colorBG = {R.color.lightBlue, R.color.lightGreen};
+    public String[] nameGames = { "Caro", "Coming Soon", "Exit"};
+    public Integer[] wallpapers = { R.drawable.menucaro, R.drawable.menuchess , R.drawable.exit};
+    public Integer[] colorBG = {R.color.lightBlue, R.color.lightGreen, R.color.lightBlue};
 
     public class DbRecord {
         public String nameGame;

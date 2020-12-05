@@ -35,7 +35,7 @@ public class GameMenuAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         ViewHolder holder;
         View row = convertView;
 
@@ -61,18 +61,29 @@ public class GameMenuAdapter extends BaseAdapter {
 
         row.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Intent intent = new Intent(context, SetUpConnection.class);
+                Intent intent = null;
                 Bundle bundle = new Bundle();
 
                 int code = -1;
                 if (position == 0){
+                    intent = new Intent(context, SetUpConnection.class);
                     code = Constant_Name_Game.CARO.getValue();
                 }
-                bundle.putInt("CodeGame", code);
+                else if (position == 1){
+                    code = Constant_Name_Game.COMMING_GAME.getValue();
+                }
 
-                intent.putExtras(bundle);
                 if (code != -1){
-                    context.startActivity(intent);
+                    if (code == Constant_Name_Game.CARO.getValue()){
+                        bundle.putInt("CodeGame", code);
+                        intent.putExtras(bundle);
+                        context.startActivity(intent);
+                        ((Activity)context).finish();
+                    }
+
+                }
+                else {
+                    ((Activity)context).finish();
                 }
             }
         });

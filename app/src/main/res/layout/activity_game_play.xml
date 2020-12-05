@@ -1,26 +1,283 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GamePlay"
-    android:orientation="vertical">
-    <com.example.duelmultiplayergame.ZoomLayout
+    tools:context=".WifiConnect"
+    android:orientation="vertical"
+    android:id="@+id/BackgroundGame">
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
-        android:background="@color/colorAccent"
-        android:layout_gravity="center"
-        android:gravity="center">
-        <GridLayout
-            android:id="@+id/myGrid"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+        <LinearLayout
+            android:id="@+id/opponentArea"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:rotation="180">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/redSurrenderBtn"
+                android:gravity="center"
+                android:padding="5dp"
+                android:orientation="vertical"
+                android:layout_marginLeft="5dp">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/peace"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Surrender"
+                    android:textColor="@color/whiteLight"
+                    android:textStyle="bold"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/redBackwardBtn"
+                android:gravity="center"
+                android:padding="5dp"
+                android:orientation="vertical"
+                android:layout_marginRight="5dp">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/time_color"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Backward"
+                    android:textColor="@color/whiteLight"
+                    android:textStyle="bold"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="8">
+            <TextView
+                android:id="@+id/opponent_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_above="@+id/zoom"
+                android:layout_margin="20dp"
+                android:text="chat">
+            </TextView>
+            <com.example.duelmultiplayergame.ZoomLayout
+                android:id="@+id/zoom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#666666"
+                android:layout_centerInParent="true">
+                <!--        <RelativeLayout-->
+                <!--            android:layout_width="match_parent"-->
+                <!--            android:layout_height="match_parent"-->
+                <!--            android:gravity="center"-->
+                <!--            android:id="@+id/myRelative"-->
+                <!--            >-->
+                <GridLayout
+
+                    android:id="@+id/myGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="horizontal"
+                    android:columnCount="20"
+                    android:rowCount="20"
+                    android:background="@android:color/background_light"
+                    android:layout_centerInParent="true">
+                </GridLayout>
+
+
+                <!--        </RelativeLayout>-->
+            </com.example.duelmultiplayergame.ZoomLayout>
+            <TextView
+                android:id="@+id/my_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_below="@+id/zoom"
+                android:layout_margin="20dp"
+                android:text="chat">
+            </TextView>
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/blueSurrenderBtn"
+                android:gravity="center"
+                android:padding="5dp"
+                android:orientation="vertical"
+                android:layout_marginLeft="5dp">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/peace"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Surrender"
+                    android:textColor="@color/whiteLight"
+                    android:textStyle="bold"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/blueBackwardBtn"
+                android:gravity="center"
+                android:padding="5dp"
+                android:orientation="vertical"
+                android:layout_marginRight="5dp">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/time_color"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Backward"
+                    android:textColor="@color/whiteLight"
+                    android:textStyle="bold"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/messchat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:weightSum="10">
+            <EditText
+                android:id="@+id/chatMsg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7.5"
+                android:ems="10"
+                android:inputType="textPersonName"/>
+            <Button
+                android:id="@+id/chatButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.5"
+                android:text="Send"/>
+        </LinearLayout>
+    </LinearLayout>
+
+<!--    <EditText-->
+<!--        android:id="@+id/chatMsg"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:ems="10"-->
+<!--        android:inputType="textPersonName"-->
+<!--        android:layout_toStartOf="@+id/chatButton"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:layout_toLeftOf="@+id/chatButton" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/chatButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:text="Send"-->
+<!--        android:layout_alignParentRight="true" />-->
+<!--    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ddffffff"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:id="@+id/endGameLayout">
+
+
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:src="@drawable/carologo"
+            android:layout_gravity="center"
+            android:id="@+id/endGameImg"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/babyblue"
+            android:textSize="30dp"
+            android:text="(Do you want to play again?)"
+            android:id="@+id/endGameTextView"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:columnCount="20"
-            android:rowCount="20"
-            android:background="@android:color/background_light" >
-        </GridLayout>
-    </com.example.duelmultiplayergame.ZoomLayout>
-</LinearLayout>
+            android:id="@+id/endGameSubLayout">
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:padding="0dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="-10dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:id="@+id/yesBtn"
+                android:src="@drawable/yes"
+                />
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:padding="0dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="-10dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:id="@+id/noBtn"
+                android:src="@drawable/no"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

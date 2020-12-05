@@ -63,7 +63,7 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
 
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                Log.i(TAG, "DOWN"+counter);
+//                Log.i(TAG, "DOWN"+counter);
 //                if (scale > MIN_ZOOM) {
 //                    mode = Mode.DRAG;
 //                    startX = motionEvent.getX() - prevDx;
@@ -74,8 +74,8 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
             case MotionEvent.ACTION_MOVE:
                 //if (mode == Mode.DRAG) {
                 counter++;
-                Log.i(TAG, "ACTION test" + counter);
-                if (counter <10){
+//                Log.i(TAG, "ACTION test" + counter);
+                if (counter <5){
                     startX = motionEvent.getX() - prevDx;
                     startY = motionEvent.getY() - prevDy;
                     return false;
@@ -93,7 +93,7 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
                 //return false;
                 //break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                Log.i(TAG, "pointer down");
+//                Log.i(TAG, "pointer down");
                 mode = Mode.ZOOM;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -103,7 +103,7 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
                 //break;
             case MotionEvent.ACTION_UP:
                 counter = 0;
-                Log.i(TAG, "UP");
+//                Log.i(TAG, "UP");
                 mode = Mode.NONE;
                 prevDx = dx;
                 prevDy = dy;
@@ -169,8 +169,7 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
                     float maxDy = child().getHeight() * (scale - 1);  // adjusted for zero pivot
                     dx = Math.min(Math.max(dx, -maxDx), 0);  // adjusted for zero pivot
                     dy = Math.min(Math.max(dy, -maxDy), 0);  // adjusted for zero pivot
-                    Log.i(TAG, "Width: " + child().getWidth() + ", scale " + scale + ", dx " + dx
-                            + ", max " + maxDx);
+//                    Log.i(TAG, "Width: " + child().getWidth() + ", scale " + scale + ", dx " + dx + ", max " + maxDx);
                     applyScaleAndTranslation();
                 }
 
@@ -183,14 +182,14 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
 
     @Override
     public boolean onScaleBegin(ScaleGestureDetector scaleDetector) {
-        Log.i(TAG, "onScaleBegin");
+//        Log.i(TAG, "onScaleBegin");
         return true;
     }
 
     @Override
     public boolean onScale(ScaleGestureDetector scaleDetector) {
         float scaleFactor = scaleDetector.getScaleFactor();
-        Log.i(TAG, "onScale(), scaleFactor = " + scaleFactor);
+//        Log.i(TAG, "onScale(), scaleFactor = " + scaleFactor);
         if (lastScaleFactor == 0 || (Math.signum(scaleFactor) == Math.signum(lastScaleFactor))) {
             float prevScale = scale;
             scale *= scaleFactor;
@@ -198,14 +197,14 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
             lastScaleFactor = scaleFactor;
             float adjustedScaleFactor = scale / prevScale;
             // added logic to adjust dx and dy for pinch/zoom pivot point
-            Log.d(TAG, "onScale, adjustedScaleFactor = " + adjustedScaleFactor);
-            Log.d(TAG, "onScale, BEFORE dx/dy = " + dx + "/" + dy);
+//            Log.d(TAG, "onScale, adjustedScaleFactor = " + adjustedScaleFactor);
+//            Log.d(TAG, "onScale, BEFORE dx/dy = " + dx + "/" + dy);
             float focusX = scaleDetector.getFocusX();
             float focusY = scaleDetector.getFocusY();
-            Log.d(TAG, "onScale, focusX/focusy = " + focusX + "/" + focusY);
+//            Log.d(TAG, "onScale, focusX/focusy = " + focusX + "/" + focusY);
             dx += (dx - focusX) * (adjustedScaleFactor - 1);
             dy += (dy - focusY) * (adjustedScaleFactor - 1);
-            Log.d(TAG, "onScale, dx/dy = " + dx + "/" + dy);
+//            Log.d(TAG, "onScale, dx/dy = " + dx + "/" + dy);
         } else {
             lastScaleFactor = 0;
         }
@@ -214,7 +213,7 @@ public class ZoomLayout extends FrameLayout implements ScaleGestureDetector.OnSc
 
     @Override
     public void onScaleEnd(ScaleGestureDetector scaleDetector) {
-        Log.i(TAG, "onScaleEnd");
+//        Log.i(TAG, "onScaleEnd");
     }
 
     private void applyScaleAndTranslation() {
