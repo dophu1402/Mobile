@@ -65,6 +65,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
     LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn, opponentArea;
     RelativeLayout BackgroundGame;
+    TextView textRedBackwardBtn, textRedSurrenderBtn, textBlueBackwardBtn, textBlueSurrenderBtn;
 
     Boolean identityPlayer;
     HistoryPlay historyPlay;
@@ -360,10 +361,21 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
     private void setupBackgroundColor(int typePlayer){
         if (typePlayer == Constant_Player.RED.getValue()){
-            this.BackgroundGame.setBackgroundColor(Color.argb(255,252, 62, 48));
+            this.BackgroundGame.setBackgroundColor(Color.argb(80,252, 62, 48));
+
+            textRedBackwardBtn.setTextColor(getResources().getColor(R.color.textRedTurn));
+            textBlueBackwardBtn.setTextColor(getResources().getColor(R.color.textRedTurn));
+            textRedSurrenderBtn.setTextColor(getResources().getColor(R.color.textRedTurn));
+            textBlueSurrenderBtn.setTextColor(getResources().getColor(R.color.textRedTurn));
+
         }
         else if (typePlayer == Constant_Player.BLUE.getValue()){
-            this.BackgroundGame.setBackgroundColor(Color.argb(255,48, 150, 252));
+            this.BackgroundGame.setBackgroundColor(Color.argb(80,48, 150, 252));
+
+            textRedBackwardBtn.setTextColor(getResources().getColor(R.color.textBlueTurn));
+            textBlueBackwardBtn.setTextColor(getResources().getColor(R.color.textBlueTurn));
+            textRedSurrenderBtn.setTextColor(getResources().getColor(R.color.textBlueTurn));
+            textBlueSurrenderBtn.setTextColor(getResources().getColor(R.color.textBlueTurn));
         }
     }
 
@@ -669,6 +681,11 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         redBackwardBtn = (LinearLayout) this.findViewById(R.id.redBackwardBtn);
         blueSurrenderBtn = (LinearLayout)this.findViewById(R.id.blueSurrenderBtn);
         blueBackwardBtn = (LinearLayout) this.findViewById(R.id.blueBackwardBtn);
+
+        textRedBackwardBtn = (TextView) this.findViewById(R.id.textRedBackwardBtn);
+        textBlueBackwardBtn = (TextView) this.findViewById(R.id.textBlueBackwardBtn);
+        textRedSurrenderBtn = (TextView) this.findViewById(R.id.textRedSurrenderBtn);
+        textBlueSurrenderBtn = (TextView) this.findViewById(R.id.textBlueSurrenderBtn);
 
         opponentArea = (LinearLayout) this.findViewById(R.id.opponentArea);
 
