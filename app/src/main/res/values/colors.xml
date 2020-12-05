@@ -9,5 +9,7 @@
     <color name="lightBlue">#00BCFF</color>
     <color name="lightGreen">#C8FF32</color>
     <color name="redWines">#E35E5E</color>
+    <color name="textRedTurn">#3c4452</color>
+    <color name="textBlueTurn">#523c3c</color>
 
 </resources>
