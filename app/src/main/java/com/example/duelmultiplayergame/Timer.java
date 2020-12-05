@@ -4,28 +4,39 @@ import android.os.CountDownTimer;
 
 public class Timer {
 
-    private final long MAX_TIME = 10000;
-    private long millisUntil = MAX_TIME;
+    private long MAX_TIME;
+    private long millisUntil;
     private boolean isTimeRunning = false;
-    private String str = String.format("%.2f",MAX_TIME);
+    private String str;
+
+    public Timer () {
+        MAX_TIME = 0;
+        millisUntil = MAX_TIME;
+        UpdateTime(millisUntil);
+    }
+    public void SetMaxTime(long Second){
+        MAX_TIME = Second;
+        millisUntil = MAX_TIME;
+        UpdateTime(millisUntil);
+    }
 
     private CountDownTimer timer = new CountDownTimer(MAX_TIME, 1) {
         @Override
         public void onTick(long millisUntilFinished) {
             millisUntil = millisUntilFinished;
-            UpdateTime();
+            UpdateTime(millisUntil);
             isTimeRunning = true;
         }
 
         @Override
         public void onFinish() {
-            UpdateTime();
+            UpdateTime(millisUntil);
             isTimeRunning = false;
         }
     };
 
-    private void UpdateTime() {
-        float s = (float) millisUntil / 1000;
+    private void UpdateTime(long millisSecond) {
+        float s = (float) millisSecond / 1000;
         str = String.format("%.2",s);
     }
 

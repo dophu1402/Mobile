@@ -67,7 +67,16 @@
                     android:textStyle="bold"
                     />
             </LinearLayout>
+
         </LinearLayout>
+        <TextView
+            android:id="@+id/player1Time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="10"
+            android:textAlignment="center"
+            android:gravity="center" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -119,6 +128,15 @@
                 android:text="chat">
             </TextView>
         </RelativeLayout>
+        <TextView
+            android:id="@+id/player2Time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="10"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:rotation="180"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
