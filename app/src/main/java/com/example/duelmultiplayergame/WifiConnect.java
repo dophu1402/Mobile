@@ -61,8 +61,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     TextView read_msg_box, connectionStatus, myChat, opponentChat;
     EditText writeMsg, chatMsg;
 
-    TextView txtTimer [] = {(TextView)findViewById(R.id.player1Time), (TextView)findViewById(R.id.player2Time)};
-
     LinearLayout messchat;
 
     LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn, opponentArea;
@@ -172,9 +170,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                 int xPos = Integer.valueOf(pos[0]);
                                 int yPos = Integer.valueOf(pos[1]);
                                 int player;
-
-                                int turnOfPlayer = totalTurns % 2;
-                                if (turnOfPlayer == 0) {
+                                
+                                if (totalTurns % 2 == 0) {
                                     player = 1;
                                 }
                                 else {
@@ -183,26 +180,16 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                 myViews[yPos * numOfRow + xPos].setOn(true, player);
                                 myViews[yPos * numOfRow + xPos].invalidate();
                                 turn = true;
-
-                                Timer countTime = new Timer();// khoi tao bien dem gio
-
-                                countTime.SetMaxTime(10); //cai dat thoi gian dem nguoc
-
-                                txtTimer[turnOfPlayer].setText(countTime.GetTimeString());//In thoi gian dem nguoc
-
-                                countTime.Start();//Bat dau dem gio
-                                do {
-                                    txtTimer[turnOfPlayer].setText(countTime.GetTimeString());
-                                    if(currentSquare != null) {
-                                        myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
-                                        countTime.Stop(); //Dung dem gio khi o da duoc chon
-                                    }
-                                } while (countTime.isRunning());
+                               
+                                if(currentSquare != null) {
+                                    myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
+                                }
+                               
 
                                 currentSquare = new ChessSquare(true, player, myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY());
 
                                 totalTurns++;
-                                int status = checkWinner(myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY(), countTime.GetTimeSec());
+                                int status = checkWinner(myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY(), 10);
 
                                 if (status!=0){
                                     resultHandler(status);
@@ -213,7 +200,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                         identityPlayer = false;
                                     }
                                 }
-                                txtTimer[turnOfPlayer].setText(""); //Xoa thoi gian dem
                             }
                             catch (Exception e){
 
