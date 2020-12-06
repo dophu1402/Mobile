@@ -37,7 +37,7 @@ public class Timer {
 
     private void UpdateTime(long millisSecond) {
         float s = (float) millisSecond / 1000;
-        str = String.format("%.2",s);
+        str = String.format("%.2f",s);
     }
 
     //Trả về chuỗi thời gian
