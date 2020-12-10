@@ -4,15 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatButton;
 
-public class MyView extends AppCompatButton {
+public class SquareView extends AppCompatButton {
 
     public interface OnToggledListener {
-        void OnToggled(MyView v, boolean touchOn);
+        void OnToggled(SquareView v, boolean touchOn);
     }
 
     boolean touchOn;
@@ -24,7 +22,7 @@ public class MyView extends AppCompatButton {
     int idX = 0; //default
     int idY = 0; //default
 
-    public MyView(Context context, int x, int y) {
+    public SquareView(Context context, int x, int y) {
         super(context);
         idX = x;
         idY = y;
@@ -43,17 +41,17 @@ public class MyView extends AppCompatButton {
         this.setBackgroundResource(0);
     }
 
-    public MyView(Context context) {
+    public SquareView(Context context) {
         super(context);
         init();
     }
 
-    public MyView(Context context, AttributeSet attrs) {
+    public SquareView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public MyView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SquareView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }

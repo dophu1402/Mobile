@@ -8,10 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
-import android.inputmethodservice.Keyboard;
-import android.media.Image;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -21,7 +18,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -40,8 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
-
-import com.example.duelmultiplayergame.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,7 +80,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
     
-    MyView[] myViews;
+    SquareView[] squareViews;
     GridLayout myGridLayout;
     
     ImageView endGameImg;
@@ -176,16 +170,16 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                 else {
                                     player = 2;
                                 }
-                                myViews[yPos * numOfRow + xPos].setOn(true, player);
-                                myViews[yPos * numOfRow + xPos].invalidate();
+                                squareViews[yPos * numOfRow + xPos].setOn(true, player);
+                                squareViews[yPos * numOfRow + xPos].invalidate();
                                 turn = true;
                                 if(currentSquare != null) {
-                                    myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
+                                    squareViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
                                 }
-                                currentSquare = new ChessSquare(true, player, myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY());
+                                currentSquare = new ChessSquare(true, player, squareViews[yPos * numOfRow + xPos].getIdX(), squareViews[yPos * numOfRow + xPos].getIdY());
 
                                 totalTurns++;
-                                int status = checkWinner(myViews[yPos * numOfRow + xPos].getIdX(),myViews[yPos * numOfRow + xPos].getIdY());
+                                int status = checkWinner(squareViews[yPos * numOfRow + xPos].getIdX(), squareViews[yPos * numOfRow + xPos].getIdY());
 
                                 if (status!=0){
                                     resultHandler(status);
@@ -467,7 +461,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                     Cell cell = this.historyPlay.getLastItem();
 
                     if (cell != null){
-                        myViews[cell.getY() * numOfRow + cell.getX()].reset();
+                        squareViews[cell.getY() * numOfRow + cell.getX()].reset();
                         this.historyPlay.pop();
                         totalTurns -= 1;
 
@@ -483,7 +477,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                     Cell cell = this.historyPlay.getLastItem();
 
                     if (cell != null){
-                        myViews[cell.getY() * numOfRow + cell.getX()].reset();
+                        squareViews[cell.getY() * numOfRow + cell.getX()].reset();
                         this.historyPlay.pop();
                         totalTurns -= 1;
 
@@ -597,7 +591,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         restartOnlineStatus = "";
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++) {
-                myViews[yPos*numOfRow + xPos].reset();
+                squareViews[yPos*numOfRow + xPos].reset();
             }
         }
     }
@@ -672,7 +666,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         myGridLayout.setRowOrderPreserved(false);
         numOfCol = myGridLayout.getColumnCount();
         numOfRow = myGridLayout.getRowCount();
-        myViews = new MyView[numOfCol*numOfRow];
+        squareViews = new SquareView[numOfCol*numOfRow];
 
         this.historyPlay = new HistoryPlay();
         this.identityPlayer = (Constant_Player.RED.getValue() == Constant_Player.RED.getValue());   // emulator that we start with red
@@ -733,7 +727,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         /// tao ban co kich thuoc = numOfRow * numOfCol
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++){
-                final MyView tView = new MyView(myGridLayout.getContext(), xPos, yPos);// 1 o tren ban co
+                final SquareView tView = new SquareView(myGridLayout.getContext(), xPos, yPos);// 1 o tren ban co
                 final int x = xPos;
                 final int y = yPos;
                 tView.setOnClickListener(new View.OnClickListener() {
@@ -760,7 +754,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                             historyPlay.add(new Cell(x, y, player));
 //                            historyPlay.showList();
                             if(currentSquare != null) {
-                                myViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
+                                squareViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
                             }
                             currentSquare = new ChessSquare(isToggled, player, tView.getIdX(),tView.getIdY());
                             tView.setOn(isToggled, player);
@@ -798,7 +792,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                     }
                 });
 
-                myViews[yPos*numOfCol + xPos] = tView;
+                squareViews[yPos*numOfCol + xPos] = tView;
                 myGridLayout.addView(tView);
             }
         }
@@ -822,11 +816,11 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                         for(int yPos=0; yPos<numOfRow; yPos++){
                             for(int xPos=0; xPos<numOfCol; xPos++){
                                 GridLayout.LayoutParams params =
-                                        (GridLayout.LayoutParams)myViews[yPos*numOfCol + xPos].getLayoutParams();
+                                        (GridLayout.LayoutParams) squareViews[yPos*numOfCol + xPos].getLayoutParams();
 
                                 params.width = pWidth/numOfCol;
                                 params.height = pWidth/numOfRow;
-                                myViews[yPos*numOfCol + xPos].setLayoutParams(params);
+                                squareViews[yPos*numOfCol + xPos].setLayoutParams(params);
                             }
                         }
                     }
@@ -861,7 +855,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         ChessSquare[][] myBoard = new ChessSquare[numOfRow][numOfCol];
         for(int yPos = 0; yPos < numOfRow; yPos++) {
             for (int xPos = 0; xPos < numOfCol; xPos++) {
-                myBoard[yPos][xPos] = new ChessSquare(myViews[yPos*numOfCol + xPos].getToggle(),myViews[yPos*numOfCol + xPos].getPlayer(), xPos, yPos);
+                myBoard[yPos][xPos] = new ChessSquare(squareViews[yPos*numOfCol + xPos].getToggle(), squareViews[yPos*numOfCol + xPos].getPlayer(), xPos, yPos);
             }
         }
 
@@ -1126,7 +1120,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     {
         for(int i = 0; i < tempSquares.size(); i++) {
             ChessSquare temp = tempSquares.get(i);
-            myViews[temp.getIdY()*numOfCol + temp.getIdX()].setWinnerOn();
+            squareViews[temp.getIdY()*numOfCol + temp.getIdX()].setWinnerOn();
         }
     }
 
@@ -1134,7 +1128,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     {
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++) {
-                myViews[yPos*numOfRow + xPos].setTouched();
+                squareViews[yPos*numOfRow + xPos].setTouched();
             }
         }
 
