@@ -177,26 +177,27 @@
                     />
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/messchat"
-            android:layout_width="match_parent"
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/messchat"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="10">
+        <EditText
+            android:id="@+id/chatMsg"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="10">
-            <EditText
-                android:id="@+id/chatMsg"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="7.5"
-                android:ems="10"
-                android:inputType="textPersonName"/>
-            <Button
-                android:id="@+id/chatButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2.5"
-                android:text="Send"/>
-        </LinearLayout>
+            android:layout_weight="7.5"
+            android:ems="10"
+            android:inputType="textPersonName"/>
+        <Button
+            android:id="@+id/chatButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.5"
+            android:text="Send"/>
     </LinearLayout>
 
 <!--    <EditText-->
