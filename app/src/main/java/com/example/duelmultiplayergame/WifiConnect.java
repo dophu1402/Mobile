@@ -558,7 +558,9 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 @Override
                 public void run() {
                     try {
+//                        outputStream.write(bytes);
                         outputStream.write(bytes);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -691,10 +693,10 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
         BackgroundGame = (RelativeLayout) this.findViewById(R.id.BackgroundGame);
 
-        redSurrenderBtn.setOnClickListener(this);
-        redBackwardBtn.setOnClickListener(this);
-        blueSurrenderBtn.setOnClickListener(this);
-        blueBackwardBtn.setOnClickListener(this);
+//        redSurrenderBtn.setOnClickListener(this);
+//        redBackwardBtn.setOnClickListener(this);
+//        blueSurrenderBtn.setOnClickListener(this);
+//        blueBackwardBtn.setOnClickListener(this);
 
         this.setupBackgroundColor(this.identityPlayer?Constant_Player.RED.getValue():Constant_Player.BLUE.getValue());
 
