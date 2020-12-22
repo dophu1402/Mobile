@@ -2,7 +2,7 @@ package com.example.duelmultiplayergame;
 
 import android.os.CountDownTimer;
 
-public class Timer {
+public class MyTimer {
 
     private final long MAX_TIME = 10000;
     private long millisUntil = MAX_TIME;

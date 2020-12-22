@@ -21,7 +21,8 @@
             android:orientation="horizontal"
             android:layout_weight="1"
             android:gravity="center"
-            android:rotation="180">
+            android:rotation="180"
+            android:layout_marginTop="40dp">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,6 +72,36 @@
                     />
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/onlineArea"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/user"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"/>
+                <TextView
+                    android:id="@+id/opponentName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/whiteLight"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -82,7 +113,13 @@
                 android:textSize="20sp"
                 android:layout_above="@+id/zoom"
                 android:layout_margin="20dp"
-                android:text="chat">
+                android:background="@drawable/chat_border"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:visibility="gone">
             </TextView>
             <com.example.duelmultiplayergame.ZoomLayout
                 android:id="@+id/zoom"
@@ -119,7 +156,13 @@
                 android:textSize="20sp"
                 android:layout_below="@+id/zoom"
                 android:layout_margin="20dp"
-                android:text="chat">
+                android:background="@drawable/chat_border"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:visibility="gone">
             </TextView>
         </RelativeLayout>
         <LinearLayout
@@ -127,7 +170,8 @@
             android:layout_height="0dp"
             android:orientation="horizontal"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginBottom="40dp">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

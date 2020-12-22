@@ -17,8 +17,8 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.os.Bundle;
 import android.view.ScaleGestureDetector;
@@ -49,18 +49,23 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WifiConnect extends Activity implements View.OnClickListener {
 
     Context context;
-    Button btnOnOff, btnDiscover, btnSend, btnChat, buttonBack;
+    Button btnOnOff, btnDiscover, btnChat, buttonBack;
     ListView listView;
-    TextView read_msg_box, connectionStatus, myChat, opponentChat;
-    EditText writeMsg, chatMsg;
+    TextView connectionStatus, myChat, opponentChat, opponentName;
+    EditText chatMsg;
+    ChatTimer chatTime;
+    ChatTimer chatTimeOpponent;
+    String name;
 
     LinearLayout messchat;
 
-    LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn, opponentArea;
+    LinearLayout redSurrenderBtn, blueSurrenderBtn, redBackwardBtn, blueBackwardBtn, opponentArea, onlineArea;
     RelativeLayout BackgroundGame;
     TextView textRedBackwardBtn, textRedSurrenderBtn, textBlueBackwardBtn, textBlueSurrenderBtn;
 
@@ -82,10 +87,10 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
-    
+
     SquareView[] squareViews;
     GridLayout myGridLayout;
-    
+
     ImageView endGameImg;
     TextView endGameTextView;
     LinearLayout endGameSubLinear;
@@ -112,7 +117,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         if (extras != null) {
             isOnline = extras.getBoolean("IS_ONLINE"); //kiem tra che do online hay offline
         }
-        
+
         if (isOnline) {
             setContentView(R.layout.activity_wifi_connect);
             context = this;
@@ -208,9 +213,17 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                             if (tempMsg.length() < 1) {
                                 break;
                             }
+                            opponentChat.setVisibility(View.VISIBLE);
                             opponentChat.setText(tempMsg);
+                            if (chatTimeOpponent == null){
+                                chatTimeOpponent = new ChatTimer(5000,1000, opponentChat);
+                            }
+                            else{
+                                chatTimeOpponent.cancel();
+                                chatTimeOpponent = new ChatTimer(5000,1000, opponentChat);
+                            }
                         }
-                        ////////////////////////////flag
+                        ///flag
                         else if (tempMsg.charAt(0) == '3')
                         {
                             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -239,7 +252,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                             endGameLinear.setVisibility(View.GONE);
                         }
                         else if (tempMsg.charAt(0) == '5'){
-                            wifiManager.disconnect();
                             startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
                             finish();
                         }
@@ -291,6 +303,17 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+
+                    }
+                });
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -333,7 +356,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(getApplicationContext(),"Connected to "+device.deviceName,Toast.LENGTH_SHORT).show();
-
+                        name = device.deviceName;
                     }
 
                     @Override
@@ -343,7 +366,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 });
             }
         });
-        ////phan nay bo
     }
     // khoi tao bien
     private void initialWork() {
@@ -352,12 +374,9 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         restartOnlineStatus = "";
         btnOnOff=(Button) findViewById(R.id.onOff);
         btnDiscover=(Button) findViewById(R.id.discover);
-        btnSend=(Button) findViewById(R.id.sendButton);
         buttonBack = (Button) this.findViewById(R.id.buttonBack);
         listView=(ListView) findViewById(R.id.peerListView);
-        read_msg_box=(TextView) findViewById(R.id.readMsg);
         connectionStatus=(TextView) findViewById(R.id.connectionStatus);
-        writeMsg=(EditText) findViewById(R.id.writeMsg);
 
         wifiManager= (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -434,7 +453,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
             final InetAddress groupOwnerAddress=wifiP2pInfo.groupOwnerAddress;
-
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner)
             {
                 connectionStatus.setText("Host");
@@ -477,6 +495,29 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 this.resultHandler(Constant_Player.RED.getValue());
                 break;
             case idBlueSurrenderBtn:
+                if (isOnline == true) {
+                    for (int yPos = 0; yPos < numOfRow; yPos++) {
+                        for (int xPos = 0; xPos < numOfCol; xPos++) {
+                            squareViews[yPos * numOfRow + xPos].setTouched();
+                        }
+                    }
+
+                    endGameTextView.setText("(Do you want to play again?)");
+                    endGameBtnYes.setVisibility(View.VISIBLE);
+                    endGameBtnNo.setVisibility(View.VISIBLE);
+                    endGameImg.setVisibility(View.VISIBLE);
+
+                    endGameLinear.setAlpha(0f);
+                    endGameLinear.setVisibility(View.VISIBLE);
+
+                    endGameLinear.animate()
+                            .alpha(1f)
+                            .setDuration(shortAnimationDuration)
+                            .setListener(null);
+                    isWin = false;
+                    endGameImg.setImageResource(R.drawable.youlose);
+                }
+                else
                 this.resultHandler(Constant_Player.BLUE.getValue());
                 break;
             case idRedBackwardBtn:
@@ -647,6 +688,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 Toast.makeText(context, "Opponent turn", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(context, "Your turn", Toast.LENGTH_SHORT).show();
+                isWin = true;
             }
         }
         restartGameTouched = false;
@@ -673,7 +715,6 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             }
             else {
                 String msg = "5no";
-                wifiManager.disconnect();
                 sendReceive.write(msg.getBytes());
                 startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
                 finish();
@@ -734,6 +775,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         endGameBtnNo=(ImageButton) findViewById(R.id.noBtn);
 
         opponentArea = (LinearLayout) this.findViewById(R.id.opponentArea);
+        onlineArea = (LinearLayout) this.findViewById(R.id.onlineArea);
+        opponentName = (TextView) this.findViewById(R.id.opponentName);
 
         BackgroundGame = (RelativeLayout) this.findViewById(R.id.BackgroundGame);
 
@@ -755,6 +798,14 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 @Override
                 public void onClick(View view) {
                     myChat.setText(chatMsg.getText());
+                    myChat.setVisibility(View.VISIBLE);
+                    if (chatTime == null){
+                        chatTime = new ChatTimer(5000,1000,myChat);
+                    }
+                    else{
+                        chatTime.cancel();
+                        chatTime = new ChatTimer(5000,1000,myChat);
+                    }
                     String msg = "2" + chatMsg.getText().toString();
                     sendReceive.write(msg.getBytes());
                     chatMsg.setText("");
@@ -767,9 +818,12 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
                 }
             });
+            onlineArea.setVisibility(View.VISIBLE);
+            opponentName.setText(name);
             opponentArea.setVisibility(View.GONE);
         }
         else{
+            onlineArea.setVisibility(View.GONE);
             myChat.setVisibility(View.INVISIBLE);
             opponentChat.setVisibility(View.INVISIBLE);
             chatMsg.setVisibility(View.INVISIBLE);
@@ -1180,7 +1234,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             squareViews[temp.getIdY()*numOfCol + temp.getIdX()].invalidate();
         }
     }
-    boolean isWin;
+    boolean isWin = true;
     private void resultHandler(int winner)
     {
         for(int yPos=0; yPos<numOfRow; yPos++){
@@ -1231,9 +1285,30 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
     }
 
-//    private boolean isEndHorizontal(int currentPosX)
-//    {
-//
-//    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (isOnline){
+        if (sendReceive != null){
+            if(!sendReceive.isInterrupted()){
+                sendReceive.interrupt();
+            }
+        }
 
+        if (connectionStatus.getText() =="Host") {
+            if (serverClass!=null)
+            if (!serverClass.isInterrupted()) {
+                serverClass.interrupt();
+            }
+        }
+        else{
+            if (clientClass!=null)
+            if (!clientClass.isInterrupted()) {
+                clientClass.interrupt();
+            }
+        }
+        }
+        startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
+        WifiConnect.this.finish();
+    }
 }

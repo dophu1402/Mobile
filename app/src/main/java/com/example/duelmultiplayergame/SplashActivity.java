@@ -40,7 +40,7 @@ public class SplashActivity extends Activity {
                 finish();
             }
         };
-        long delay = 7000L;
+        long delay = 4000L;
         Timer timer = new Timer("Timer");
         timer.schedule(timerTask, delay);
 
