@@ -110,6 +110,10 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     ClientClass clientClass;
     SendReceive sendReceive;
 
+    TextView playerTime, opponentTime;
+    CountDownTimer countDownTimer;
+    boolean timeRunning = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +155,43 @@ public class WifiConnect extends Activity implements View.OnClickListener {
             initialWork(); //khoi tao cac bien
             createBoard(); // tao ban co
         }
+        countDownTimer = new CountDownTimer(5000,1) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                float second = (float) millisUntilFinished / 1000;
+                String str = String.format("%.2f",second);
+                timeRunning = true;
+                if (totalTurns % 2 == 0){
+                    playerTime.setText(str);
+                    opponentTime.setText("");
+                }
+                else {
+                    opponentTime.setText(str);
+                    playerTime.setText("");
+                }
+            }
+            @Override
+            public void onFinish() {
+                timeRunning = false;
+                playerTime.setText("");
+                opponentTime.setText("");
+                int status = 0;
+                if (totalTurns % 2 == 0) {
+                    status = 2;
+                }
+                else {
+                    status = 1;
+                }
+                if (!isOnline) {
+                    resultHandler(status);
+                    if (status == Constant_Player.RED.getValue()) {  // the winner is red, red will start firstly
+                        identityPlayer = true;
+                    } else if (status == Constant_Player.BLUE.getValue()) {    // otherwise
+                        identityPlayer = false;
+                    }
+                }
+            }
+        };
     }
     ///Massage handler
     Handler handler=new Handler(new Handler.Callback() {
@@ -704,6 +745,8 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     {
         ////////flag
         this.setupBackgroundColor(this.identityPlayer?Constant_Player.RED.getValue():Constant_Player.BLUE.getValue());
+        playerTime.setText("");
+        opponentTime.setText("");
         if (isOnline == true) {
             if (restartGame) {
                 String msg = "3yes";
@@ -777,6 +820,9 @@ public class WifiConnect extends Activity implements View.OnClickListener {
         opponentArea = (LinearLayout) this.findViewById(R.id.opponentArea);
         onlineArea = (LinearLayout) this.findViewById(R.id.onlineArea);
         opponentName = (TextView) this.findViewById(R.id.opponentName);
+
+        playerTime = (TextView) this.findViewById(R.id.playerTime);
+        opponentTime = (TextView) this.findViewById(R.id.opponentTime);
 
         BackgroundGame = (RelativeLayout) this.findViewById(R.id.BackgroundGame);
 
@@ -863,6 +909,10 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                 squareViews[currentSquare.idY*numOfCol + currentSquare.idX].setOffClicking();
                             }
                             currentSquare = new ChessSquare(isToggled, player, tView.getIdX(),tView.getIdY());
+                            if (!tView.getToggle()){
+                                countDownTimer.cancel();
+                                timeRunning = false;
+                            }
                             tView.setOn(isToggled, player);
 
                             int status = checkWinner(tView.getIdX(),tView.getIdY());
@@ -898,6 +948,11 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 //                                else{
 //                                    Toast.makeText(context, "You Win", Toast.LENGTH_SHORT).show();
 //                                }
+                            }
+                            else {
+                                if (!timeRunning) {
+                                    countDownTimer.start();
+                                }
                             }
                         }
                     }
