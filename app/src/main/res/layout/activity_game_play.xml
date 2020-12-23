@@ -102,6 +102,13 @@
                     />
             </LinearLayout>
         </LinearLayout>
+        <TextView
+            android:id="@+id/playerTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:gravity="center"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -165,6 +172,14 @@
                 android:visibility="gone">
             </TextView>
         </RelativeLayout>
+        <TextView
+            android:id="@+id/opponentTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:rotation="180"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
