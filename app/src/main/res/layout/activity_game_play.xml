@@ -42,7 +42,6 @@
                     android:id="@+id/textRedSurrenderBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Surrender"
                     android:textColor="@color/whiteLight"
                     android:textStyle="bold"
                     />
@@ -66,7 +65,6 @@
                     android:id="@+id/textRedBackwardBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Backward"
                     android:textColor="@color/whiteLight"
                     android:textStyle="bold"
                     />
@@ -103,7 +101,7 @@
             </LinearLayout>
         </LinearLayout>
         <TextView
-            android:id="@+id/playerTime"
+            android:id="@+id/opponentTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -119,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_above="@+id/zoom"
-                android:layout_margin="20dp"
+                android:layout_margin="5dp"
                 android:background="@drawable/chat_border"
                 android:layout_centerHorizontal="true"
                 android:paddingBottom="5dp"
@@ -162,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_below="@+id/zoom"
-                android:layout_margin="20dp"
+                android:layout_margin="5dp"
                 android:background="@drawable/chat_border"
                 android:layout_centerHorizontal="true"
                 android:paddingBottom="5dp"
@@ -173,13 +171,12 @@
             </TextView>
         </RelativeLayout>
         <TextView
-            android:id="@+id/opponentTime"
+            android:id="@+id/playerTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:gravity="center"
-            android:textSize="30sp"
-            android:rotation="180"/>
+            android:textSize="30sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -206,7 +203,6 @@
                     android:id="@+id/textBlueSurrenderBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Surrender"
                     android:textColor="@color/whiteLight"
                     android:textStyle="bold"
                     />
@@ -230,7 +226,6 @@
                     android:id="@+id/textBlueBackwardBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Backward"
                     android:textColor="@color/whiteLight"
                     android:textStyle="bold"
                     />

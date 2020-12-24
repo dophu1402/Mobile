@@ -78,7 +78,7 @@ public class GameMenuAdapter extends BaseAdapter {
                         bundle.putInt("CodeGame", code);
                         intent.putExtras(bundle);
                         context.startActivity(intent);
-                        //((Activity)context).finish();
+                        ((Activity)context).finish();
                     }
 
                 }
