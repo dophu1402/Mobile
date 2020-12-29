@@ -223,7 +223,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                     byte[] readBuff= (byte[]) msg.obj;
                     String tempMsg=new String(readBuff,0,msg.arg1);
                     if (tempMsg.length() > 0){
-                        if (tempMsg.charAt(0) == '1'){
+                        if (tempMsg.charAt(0) == '1'){ //play
                             tempMsg = tempMsg.substring(1);
                             String[] pos = tempMsg.split(",",2);
                             if(pos.length<2){
@@ -243,6 +243,10 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                     bgturn = 1;
                                 }
                                 setupBackgroundColor(bgturn);
+
+                                blueBackwardBtn.setClickable(false);
+                                blueBackwardBtn.setVisibility(View.INVISIBLE);
+
 
                                 countDownTimer.cancel();
                                 countDownTimer.start();
@@ -276,7 +280,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
 
                             }
                         }
-                        else if (tempMsg.charAt(0) == '2') {
+                        else if (tempMsg.charAt(0) == '2') { //chat
                             tempMsg = tempMsg.substring(1);
                             if (tempMsg.length() < 1) {
                                 break;
@@ -292,7 +296,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                             }
                         }
                         ///flag
-                        else if (tempMsg.charAt(0) == '3')
+                        else if (tempMsg.charAt(0) == '3') //request rematch
                         {
                             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                 @Override
@@ -319,13 +323,14 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                             setResetGame();
                             endGameLinear.setVisibility(View.GONE);
                         }
-                        else if (tempMsg.charAt(0) == '5'){
+                        else if (tempMsg.charAt(0) == '5'){ //disconnect
                             Toast.makeText(context, "Opponent disconnected", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(WifiConnect.this, MenuNavigationActivity.class));
                             finish();
                         }
-                        else if (tempMsg.charAt(0) == '6'){
+                        else if (tempMsg.charAt(0) == '6'){ //undo
                                 blueBackwardBtn.setClickable(false);
+                                blueBackwardBtn.setVisibility(View.INVISIBLE);
                                 turn = false;
                                 Cell cell = historyPlay.getLastItem();
 
@@ -345,7 +350,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                                 }
 
                         }
-                        else if (tempMsg.charAt(0) == '7'){
+                        else if (tempMsg.charAt(0) == '7'){ //surrender
                             resultScreen(true);
                         }
                     }
@@ -624,19 +629,22 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 countDownTimer.cancel();
                 countDownTimer.start();
                 if (!isOnline) {
-                    /* is in blue turn: person who start is blue and turn is even and otherwise ==> red want to take cell again*/
-                    if ((!this.identityPlayer && (this.totalTurns % 2 == 0)) || (this.identityPlayer && (this.totalTurns % 2 == 1))) {
-//                    Log.d("CheckBackward", "onClick: Blue");
-                        Cell cell = this.historyPlay.getLastItem();
+                    Cell cell = this.historyPlay.getLastItem();
 
-                        if (cell != null) {
-                            squareViews[cell.getY() * numOfRow + cell.getX()].reset();
-                            this.historyPlay.pop();
-                            totalTurns -= 1;
+                    if (cell != null) {
+                        squareViews[cell.getY() * numOfRow + cell.getX()].reset();
+                        this.historyPlay.pop();
+                        totalTurns -= 1;
 
-                            /* change to red turn */
-                            this.setupBackgroundColor(Constant_Player.RED.getValue());
+                        /* change to red turn */
+                        int bgturn;
+                        /* change to red turn */
+                        if (totalTurns % 2 == 0) {
+                            bgturn = 1;
+                        } else {
+                            bgturn = 2;
                         }
+                        setupBackgroundColor(bgturn);
                     }
                 }
                 break;
@@ -646,6 +654,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                         String msg = "6undo";
                         sendReceive.write(msg.getBytes());
                         blueBackwardBtn.setClickable(false);
+                        blueBackwardBtn.setVisibility(View.INVISIBLE);
                         turn = true;
                         Cell cell = historyPlay.getLastItem();
 
@@ -668,19 +677,21 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                 else {
                     countDownTimer.cancel();
                     countDownTimer.start();
-                    /* is in red turn: person who start is red and turn is even and otherwise ==> Blue want to take cell again*/
-                    if ((this.identityPlayer && (this.totalTurns % 2 == 0)) || (!this.identityPlayer && (this.totalTurns % 2 == 1))) {
-//                    Log.d("CheckBackward", "onClick: Red");
-                        Cell cell = this.historyPlay.getLastItem();
+                    Cell cell = this.historyPlay.getLastItem();
+                    if (cell != null) {
+                        squareViews[cell.getY() * numOfRow + cell.getX()].reset();
+                        this.historyPlay.pop();
+                        totalTurns -= 1;
 
-                        if (cell != null) {
-                            squareViews[cell.getY() * numOfRow + cell.getX()].reset();
-                            this.historyPlay.pop();
-                            totalTurns -= 1;
-
-                            /* change to red turn */
-                            this.setupBackgroundColor(Constant_Player.BLUE.getValue());
+                        /* change to red turn */
+                        int bgturn;
+                        /* change to red turn */
+                        if (totalTurns % 2 == 0) {
+                            bgturn = 1;
+                        } else {
+                            bgturn = 2;
                         }
+                        setupBackgroundColor(bgturn);
                     }
                 }
                 break;
@@ -987,6 +998,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
                             if (isOnline == true) {
                                 turn = false; //doi luot choi
                                 blueBackwardBtn.setClickable(true);
+                                blueBackwardBtn.setVisibility(View.VISIBLE);
                                 String msg = "1" + String.valueOf(tView.getIdX()) + "," + String.valueOf(tView.getIdY());
                                 sendReceive.write(msg.toString().getBytes());
                             }
@@ -1357,6 +1369,7 @@ public class WifiConnect extends Activity implements View.OnClickListener {
     boolean isWin = true;
     private void resultHandler(int winner)
     {
+        countDownTimer.cancel();
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++) {
                 squareViews[yPos*numOfRow + xPos].setTouched();
